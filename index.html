@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculator3d - Pro Master v13.0 (Contraste Alto)</title>
+    <title>Calculator3d Pro Master</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
@@ -11,27 +11,23 @@
     <style>
         :root {
             --neon-green: #39FF14;
-            --neon-glow: 0 0 15px rgba(57, 255, 20, 0.7);
+            --neon-glow: 0 0 15px rgba(57, 255, 20, 0.6);
             --bg-dark: #05080a;
             --card-bg: rgba(10, 10, 10, 0.95);
             --base-scale: 100%;
         }
         
-        * { box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
 
         body {
             background-color: var(--bg-dark);
-            /* FONDO MAESTRO AJUSTADO: Se ha subido la opacidad del patrón SVG al 18% para mayor contraste */
             background-image: 
-                /* Capa 1: Sombra para legibilidad */
                 linear-gradient(rgba(5, 8, 10, 0.85), rgba(5, 8, 10, 0.85)),
-                /* Capa 2: Iconos de Dinero y Filamento Repetidos con ALTA OPACIDAD (0.18) */
                 url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2339FF14' fill-opacity='0.18'%3E%3Cpath d='M20 20c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10zm0 15h20v5H20zm5 10h10v5H25z'/%3E%3Ctext x='70' y='40' font-family='Arial' font-size='30' font-weight='bold'%3E%24%3C/text%3E%3Ctext x='20' y='90' font-family='Arial' font-size='25' font-weight='bold'%3Ekr%3C/text%3E%3Cpath d='M80 80c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9zm0-5c8 0 14 6 14 14s-6 14-14 14-14-6-14-14 6-14 14-14z'/%3E%3Ctext x='75' y='100' font-family='Arial' font-size='20' font-weight='bold'%3E%E2%82%AC%3C/text%3E%3C/g%3E%3C/svg%3E"),
-                /* Capa 3: Textura Fibra de Carbono */
-                url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23111111' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+                url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23111111' fill-opacity='0.4'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
             background-attachment: fixed;
-            color: var(--neon-green);
+            color: #fff;
             margin: 0;
             padding: 10px;
             font-size: var(--base-scale);
@@ -42,175 +38,215 @@
         .app-container {
             background: var(--card-bg);
             width: 100%;
-            max-width: 800px;
-            padding: 1.5em;
+            max-width: 900px;
+            padding: 20px;
             border: 2px solid var(--neon-green);
             box-shadow: var(--neon-glow);
-            backdrop-filter: blur(8px);
+            border-radius: 12px;
+        }
+
+        /* DISEÑO DE CABECERA SEGÚN SCREENSHOT */
+        .top-nav {
             display: flex;
-            flex-direction: column;
-            z-index: 1;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--neon-green);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .refresh-zone { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-        .refresh-btn {
-            background: var(--neon-green); color: #000; border: none; padding: 12px;
-            font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%;
-            text-transform: uppercase; transition: 0.3s;
+        .brand h1 { color: var(--neon-green); margin: 0; font-size: 1.5em; text-shadow: var(--neon-glow); text-transform: uppercase; }
+
+        .btn-tool {
+            background: #222; border: 1px solid #444; color: #aaa;
+            padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 0.8em;
+        }
+        .btn-tool.active { border-color: var(--neon-green); color: var(--neon-green); background: rgba(57, 255, 20, 0.15); }
+
+        /* GRID DE PANELES SUPERIORES */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        header { text-align: center; border-bottom: 2px solid var(--neon-green); margin-bottom: 1.5em; padding-bottom: 1em; }
-        .brand-name { font-size: 1.8em; font-weight: bold; letter-spacing: 4px; text-shadow: var(--neon-glow); }
-        
-        .controls-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
-        .control-btn {
-            background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
-            padding: 8px; cursor: pointer; font-size: 0.7em; flex: 1; transition: 0.2s;
+        .panel {
+            border: 1px solid var(--neon-green);
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
         }
-        .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
 
-        .part-card { border: 1px solid #333; padding: 1em; margin-bottom: 1em; background: rgba(0,0,0,0.7); position: relative; }
-        .part-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #222; }
-        .remove-btn { background: #ff0055; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 0.7em; }
-        
-        .toggle-container { 
-            width: 100%; margin: 20px 0; padding: 15px; border: 1px solid #333; 
-            background: rgba(57, 255, 20, 0.1); display: flex; align-items: center; justify-content: flex-start; gap: 12px;
+        .panel-title { color: var(--neon-green); font-size: 0.7em; text-transform: uppercase; font-weight: bold; margin-bottom: 12px; display: block; }
+
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-size: 0.65em; color: #888; margin-bottom: 4px; text-transform: uppercase; }
+        input, select {
+            width: 100%; background: #000; border: 1px solid #333; color: var(--neon-green);
+            padding: 10px; border-radius: 5px; font-size: 1em;
         }
-        .toggle-container input { transform: scale(1.4); cursor: pointer; }
-        .toggle-container label { font-size: 0.8em; font-weight: bold; color: #fff; cursor: pointer; }
+        input:focus { border-color: var(--neon-green); outline: none; }
+        input:disabled { opacity: 0.3; }
 
-        .input-group { margin-bottom: 1em; }
-        label { display: block; font-size: 0.7em; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
-        input, select { width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px; font-size: 1em; outline: none; }
-        input:disabled { opacity: 0.3; border-color: #444; }
-
+        /* TARJETAS DE PIEZA */
+        .part-card {
+            border: 1px solid var(--neon-green);
+            background: rgba(15, 15, 15, 0.9);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .part-header {
+            background: rgba(57, 255, 20, 0.1);
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        .part-body { padding: 15px; }
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        .master-summary { margin-top: 10px; border: 2px solid var(--neon-green); padding: 1.5em; background: rgba(0,0,0,0.85); }
-        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85em; border-bottom: 1px dashed #222; padding-bottom: 4px; }
-        .total-highlight { background: var(--neon-green); color: #000; padding: 1em; text-align: center; margin-top: 10px; box-shadow: var(--neon-glow); }
-        .total-price { font-size: 2.2em; font-weight: 900; block; }
-        
-        .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin: 15px 0; text-transform: uppercase; }
-        .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; border-radius: 4px; }
-        .disclaimer { font-size: 0.65em; text-align: center; margin-top: 20px; opacity: 0.8; line-height: 1.4; color: #fff; font-style: italic; }
+        .remove-btn { background: #500; color: #f55; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+
+        /* TOGGLE DE GARANTÍA */
+        .guarantee-box {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(57, 255, 20, 0.05); border: 1px dashed var(--neon-green);
+            padding: 12px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .guarantee-box input { width: 25px; height: 25px; cursor: pointer; }
+        .guarantee-box span { font-size: 0.75em; color: #bbb; line-height: 1.3; }
+
+        /* RESUMEN MAESTRO */
+        .master-summary {
+            background: #000;
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2);
+        }
+        .summary-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.85em; }
+        .final-total { text-align: center; margin-top: 15px; }
+        .final-total .price { font-size: 2.5em; font-weight: bold; color: var(--neon-green); text-shadow: var(--neon-glow); }
+
+        /* BOTONES DE ACCIÓN */
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-main {
+            padding: 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+        }
+        .btn-add { background: var(--neon-green); color: #000; }
+        .btn-reset { background: #222; color: var(--neon-green); border: 1px solid var(--neon-green); }
+
+        .heavy-alert { display: none; background: #ff0055; color: #fff; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 15px; border-radius: 6px; }
+        .disclaimer { font-size: 0.6em; text-align: center; margin-top: 20px; color: #666; line-height: 1.4; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="refresh-zone">
-        <button class="refresh-btn" onclick="forceUpdate()" id="ui-refresh-btn">🔄 REINICIAR APP / LIMPIAR CACHÉ</button>
+    <div class="top-nav">
+        <div class="brand"><h1>CALCULATOR3D</h1></div>
+        <div class="controls">
+            <button class="btn-tool" onclick="setLang('en')" id="btn-en">EN</button>
+            <button class="btn-tool" onclick="setLang('sv')" id="btn-sv">SV</button>
+            <button class="btn-tool active" onclick="setLang('es')" id="btn-es">ES</button>
+            <span style="color:#444; margin:0 5px">|</span>
+            <button class="btn-tool" onclick="setScale('90%')">S</button>
+            <button class="btn-tool" onclick="setScale('110%')">L</button>
+        </div>
     </div>
 
-    <header>
-        <div class="brand-name">CALCULATOR3D</div>
-        <div class="controls-row">
-            <div class="lang-bar" style="display:flex; gap:5px; flex:2;">
-                <button class="control-btn" id="btn-en" onclick="setLang('en')">EN</button>
-                <button class="control-btn" id="btn-sv" onclick="setLang('sv')">SV</button>
-                <button class="control-btn active" id="btn-es" onclick="setLang('es')">ES</button>
+    <div class="config-grid">
+        <div class="panel">
+            <span class="panel-title" id="ui-config-title">Configuración Base</span>
+            <div class="input-group">
+                <label id="ui-curr-lbl">Moneda</label>
+                <select id="currency" onchange="calculateAll()">
+                    <option value="SEK">SEK (kr)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="MXN">MXN ($)</option>
+                    <option value="COP">COP ($)</option>
+                    <option value="ARS">ARS ($)</option>
+                    <option value="CLP">CLP ($)</option>
+                    <option value="BRL">BRL (R$)</option>
+                    <option value="GBP">GBP (£)</option>
+                </select>
             </div>
-            <div class="scale-bar" style="display:flex; gap:5px; flex:1;">
-                <button class="control-btn" onclick="setScale('90%')">S</button>
-                <button class="control-btn" onclick="setScale('110%')">L</button>
+            <div class="row">
+                <div class="input-group">
+                    <label id="ui-fkg-lbl">Filamento /kg</label>
+                    <input type="number" id="globalCostKg" value="25" step="0.01" oninput="calculateAll()">
+                </div>
+                <div class="input-group">
+                    <label id="ui-markup-lbl">Ganancia %</label>
+                    <input type="number" id="globalMarkup" value="40" oninput="calculateAll()">
+                </div>
             </div>
         </div>
-    </header>
-
-    <div class="input-group">
-        <label id="ui-currency-label">MONEDA / CURRENCY</label>
-        <select id="currency" onchange="calculateAll()">
-            <option value="SEK">SEK (kr)</option>
-            <option value="USD">USD ($)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="MXN">MXN ($)</option>
-            <option value="COP">COP ($)</option>
-            <option value="ARS">ARS ($)</option>
-            <option value="CLP">CLP ($)</option>
-            <option value="BRL">BRL (R$)</option>
-            <option value="GBP">GBP (£)</option>
-        </select>
-    </div>
-
-    <div class="row">
-        <div class="input-group">
-            <label id="ui-cost-kg-lbl">FILAMENTO /KG</label>
-            <input type="number" id="globalCostKg" value="25" step="0.01" oninput="calculateAll()">
-        </div>
-        <div class="input-group">
-            <label id="ui-markup-lbl">GANANCIA %</label>
-            <input type="number" id="globalMarkup" value="40" oninput="calculateAll()">
+        <div class="panel">
+            <span class="panel-title" id="ui-guarantee-title">Garantía</span>
+            <div class="guarantee-box">
+                <input type="checkbox" id="overrideGain" onchange="calculateAll()">
+                <span id="ui-toggle-label">Libera la regla de error de impresion garantia mas de 500g de material</span>
+            </div>
         </div>
     </div>
 
-    <div id="ui-heavy-global-alert" class="alert-heavy-global">⚠️ +500G TOTAL: TARIFA 80% APLICADA</div>
+    <div id="ui-heavy-alert" class="heavy-alert">⚠️ +500G TOTAL: TARIFA 80% APLICADA</div>
 
     <div id="parts-container"></div>
-    <button class="add-part-btn" onclick="addPart()" id="ui-add-part">+ AGREGAR PIEZA</button>
 
-    <div class="toggle-container">
-        <input type="checkbox" id="overrideGain" onchange="calculateAll()">
-        <label for="overrideGain" id="ui-toggle-label">Libera la regla de error de impresion garantia mas de 500g de material</label>
+    <div class="action-btns">
+        <button class="btn-main btn-reset" onclick="forceUpdate()" id="ui-reset-btn">Reiniciar / Caché</button>
+        <button class="btn-main btn-add" onclick="addPart()" id="ui-add-part">+ AGREGAR PIEZA</button>
     </div>
 
     <div class="master-summary">
-        <div class="summary-line"><span id="ui-total-mat-lbl">FILAMENTO:</span><span id="master-mat">0.00</span></div>
-        <div class="summary-line"><span id="ui-total-elec-lbl">CORRIENTE + MANT:</span><span id="master-elec">0.00</span></div>
-        <div class="summary-line"><span id="ui-total-design-lbl">DISEÑO:</span><span id="master-design">0.00</span></div>
-        <div class="summary-line"><span id="ui-total-profit-lbl">GANANCIA NETA:</span><span id="master-profit">0.00</span></div>
-        <div class="total-highlight">
-            <span class="total-price" id="master-total">0.00 $</span>
+        <div class="summary-line"><span id="ui-res-mat">MATERIAL:</span><span id="master-mat">0.00</span></div>
+        <div class="summary-line"><span id="ui-res-elec">CORRIENTE + MANT:</span><span id="master-elec">0.00</span></div>
+        <div class="summary-line"><span id="ui-res-des">DISEÑO:</span><span id="master-design">0.00</span></div>
+        <div class="summary-line" style="color:var(--neon-green); font-weight:bold;"><span id="ui-res-prof">GANANCIA NETA:</span><span id="master-profit">0.00</span></div>
+        <div class="final-total">
+            <div id="ui-res-total-lbl" style="font-size:0.7em; color:#888; text-transform:uppercase">Precio Sugerido</div>
+            <div class="price" id="master-total">0.00 kr</div>
         </div>
     </div>
 
-    <div id="ui-disclaimer-lbl" class="disclaimer">
+    <div class="disclaimer" id="ui-disc-lbl">
         * Las tarifas de los precios de corriente pueden variar. <br> No es un cálculo exacto, es un aproximado.
     </div>
 </div>
 
 <script>
-    function forceUpdate() {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-        }
-        localStorage.clear(); sessionStorage.clear();
-        window.location.reload(true);
-    }
+    function forceUpdate() { localStorage.clear(); location.reload(true); }
 
-    const powerRates = { 
-        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24,
-        MXN: 2.10, COP: 750, ARS: 85, CLP: 145, BRL: 0.75 
-    };
-    const symbols = { 
-        USD: "$", EUR: "€", SEK: "kr", GBP: "£",
-        MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$" 
-    };
+    const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, MXN: 2.10, COP: 750, ARS: 90, CLP: 150, BRL: 0.80, GBP: 0.25 };
+    const symbols = { USD: "$", EUR: "€", SEK: "kr", MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$", GBP: "£" };
 
     const i18n = {
         es: {
-            refBtn: "🔄 REINICIAR APP / LIMPIAR CACHÉ", add: "+ AGREGAR PIEZA", profit: "GANANCIA NETA:",
-            curr: "MONEDA / CURRENCY", fkg: "FILAMENTO /KG", gperc: "GANANCIA %",
+            config: "Configuración Base", guarantee: "Garantía", curr: "Moneda", fkg: "Filamento /kg", markup: "Ganancia %",
+            toggle: "Libera la regla de error de impresion garantia mas de 500g de material", heavy: "⚠️ +500G TOTAL: TARIFA 80% APLICADA",
+            add: "+ AGREGAR PIEZA", reset: "Reiniciar / Caché", resMat: "MATERIAL:", resElec: "CORRIENTE + MANT:", resDes: "DISEÑO:", resProf: "GANANCIA NETA:", total: "Precio Sugerido",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", dh: "H. DISEÑO", dp: "P. HORA", rem: "X",
-            toggle: "Libera la regla de error de impresion garantia mas de 500g de material",
-            tMat: "FILAMENTO:", tElec: "CORRIENTE + MANT:", tDes: "DISEÑO:", heavy: "⚠️ +500G TOTAL: TARIFA 80% APLICADA",
             disc: "* Las tarifas de los precios de corriente pueden variar. <br> No es un cálculo exacto, es un aproximado."
         },
         en: {
-            refBtn: "🔄 REFRESH APP / CLEAR CACHE", add: "+ ADD PART", profit: "NET PROFIT:",
-            curr: "CURRENCY / MONEDA", fkg: "FILAMENT /KG", gperc: "PROFIT %",
+            config: "Base Settings", guarantee: "Guarantee", curr: "Currency", fkg: "Filament /kg", markup: "Profit %",
+            toggle: "Release print error rule guarantee over 500g material", heavy: "⚠️ +500G TOTAL: 80% RATE APPLIED",
+            add: "+ ADD PART", reset: "Reset / Cache", resMat: "MATERIAL:", resElec: "POWER + MAINT:", resDes: "DESIGN:", resProf: "NET PROFIT:", total: "Suggested Price",
             part: "PART", weight: "WEIGHT (G)", time: "TIME (H)", dh: "D. HOURS", dp: "H. RATE", rem: "X",
-            toggle: "Release print error rule guarantee over 500g material",
-            tMat: "FILAMENT:", tElec: "POWER + MAINT:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% APPLIED",
             disc: "* Electricity rates may vary. <br> It is not an exact calculation, it is an approximation."
         },
         sv: {
-            refBtn: "🔄 UPPDATERA APPEN / RENSA CACHE", add: "+ LÄGG TILL DEL", profit: "NETTOVINST:",
-            curr: "VALUTA / CURRENCY", fkg: "FILAMENT /KG", gperc: "VINST %",
+            config: "Basinställningar", guarantee: "Garanti", curr: "Valuta", fkg: "Filament /kg", markup: "Vinst %",
+            toggle: "Frigör regel för utskriftsfel garanti över 500g material", heavy: "⚠️ +500G TOTALT: 80% VINST TILLÄMPAD",
+            add: "+ LÄGG TILL DEL", reset: "Återställ / Cache", resMat: "MATERIAL:", resElec: "EL + UNDERHÅLL:", resDes: "DESIGN:", resProf: "NETTOVINST:", total: "Föreslaget Pris",
             part: "DEL", weight: "VIKT (G)", time: "TID (H)", dh: "DESIGNTIMMAR", dp: "TIMPRIS", rem: "X",
-            toggle: "Frigör regel för utskriftsfel garanti över 500g material",
-            tMat: "FILAMENT:", tElec: "EL + UNDERHÅLL:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% VINST",
             disc: "* Elpriserna kan variera. <br> Det är inte en exakt beräkning, det är en uppskattning."
         }
     };
@@ -226,16 +262,17 @@
         const partHtml = `
             <div class="part-card" id="part-${partCount}">
                 <div class="part-header"><span class="ui-part-text">${i18n[currentLang].part}</span> #${partCount}<button class="remove-btn" onclick="removePart(${partCount})">${i18n[currentLang].rem}</button></div>
-                <div class="row">
-                    <div class="input-group"><label class="ui-weight-text">${i18n[currentLang].weight}</label><input type="number" class="p-weight" value="0" oninput="calculateAll()"></div>
-                    <div class="input-group"><label class="ui-time-text">${i18n[currentLang].time}</label><input type="number" class="p-time" value="0" oninput="calculateAll()"></div>
+                <div class="part-body">
+                    <div class="row">
+                        <div class="input-group"><label class="ui-weight-text">${i18n[currentLang].weight}</label><input type="number" class="p-weight" value="0" oninput="calculateAll()"></div>
+                        <div class="input-group"><label class="ui-time-text">${i18n[currentLang].time}</label><input type="number" class="p-time" value="0" oninput="calculateAll()"></div>
+                    </div>
+                    <div class="row">
+                        <div class="input-group"><label class="ui-dh-text">${i18n[currentLang].dh}</label><input type="number" class="p-designH" value="0" oninput="calculateAll()"></div>
+                        <div class="input-group"><label class="ui-dp-text">${i18n[currentLang].dp}</label><input type="number" class="p-designP" value="50" oninput="calculateAll()"></div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="input-group"><label class="ui-dh-text">${i18n[currentLang].dh}</label><input type="number" class="p-designH" value="0" oninput="calculateAll()"></div>
-                    <div class="input-group"><label class="ui-dp-text">${i18n[currentLang].dp}</label><input type="number" class="p-designP" value="50" oninput="calculateAll()"></div>
-                </div>
-            </div>
-        `;
+            </div>`;
         container.insertAdjacentHTML('beforeend', partHtml);
         calculateAll();
     }
@@ -244,28 +281,27 @@
 
     function setLang(lang) {
         currentLang = lang; const t = i18n[lang];
-        document.getElementById('ui-refresh-btn').innerText = t.refBtn;
-        document.getElementById('ui-add-part').innerText = t.add;
-        document.getElementById('ui-currency-label').innerText = t.curr;
-        document.getElementById('ui-cost-kg-lbl').innerText = t.fkg;
-        document.getElementById('ui-markup-lbl').innerText = t.gperc;
-        document.getElementById('ui-total-mat-lbl').innerText = t.tMat;
-        document.getElementById('ui-total-elec-lbl').innerText = t.tElec;
-        document.getElementById('ui-total-design-lbl').innerText = t.tDes;
-        document.getElementById('ui-total-profit-lbl').innerText = t.profit;
+        document.getElementById('ui-config-title').innerText = t.config;
+        document.getElementById('ui-guarantee-title').innerText = t.guarantee;
+        document.getElementById('ui-curr-lbl').innerText = t.curr;
+        document.getElementById('ui-fkg-lbl').innerText = t.fkg;
+        document.getElementById('ui-markup-lbl').innerText = t.markup;
         document.getElementById('ui-toggle-label').innerText = t.toggle;
-        document.getElementById('ui-heavy-global-alert').innerText = t.heavy;
-        document.getElementById('ui-disclaimer-lbl').innerHTML = t.disc;
+        document.getElementById('ui-heavy-alert').innerText = t.heavy;
+        document.getElementById('ui-add-part').innerText = t.add;
+        document.getElementById('ui-reset-btn').innerText = t.reset;
+        document.getElementById('ui-res-mat').innerText = t.resMat;
+        document.getElementById('ui-res-elec').innerText = t.resElec;
+        document.getElementById('ui-res-des').innerText = t.resDes;
+        document.getElementById('ui-res-prof').innerText = t.resProf;
+        document.getElementById('ui-res-total-lbl').innerText = t.total;
+        document.getElementById('ui-disc-lbl').innerHTML = t.disc;
+        document.querySelectorAll('.btn-tool').forEach(b => b.classList.toggle('active', b.id === 'btn-'+lang));
         document.querySelectorAll('.part-card').forEach(card => {
-            card.querySelector('.ui-part-text').innerText = t.part;
-            card.querySelector('.remove-btn').innerText = t.rem;
-            card.querySelector('.ui-weight-text').innerText = t.weight;
-            card.querySelector('.ui-time-text').innerText = t.time;
-            card.querySelector('.ui-dh-text').innerText = t.dh;
-            card.querySelector('.ui-dp-text').innerText = t.dp;
+            card.querySelector('.ui-part-text').innerText = t.part; card.querySelector('.remove-btn').innerText = t.rem;
+            card.querySelector('.ui-weight-text').innerText = t.weight; card.querySelector('.ui-time-text').innerText = t.time;
+            card.querySelector('.ui-dh-text').innerText = t.dh; card.querySelector('.ui-dp-text').innerText = t.dp;
         });
-        document.querySelectorAll('.lang-bar .control-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + lang).classList.add('active');
         calculateAll();
     }
 
@@ -273,7 +309,6 @@
         const curr = document.getElementById('currency').value;
         const costKg = parseFloat(document.getElementById('globalCostKg').value) || 0;
         const markupInput = document.getElementById('globalMarkup');
-        const baseMarkup = parseFloat(markupInput.value) || 0;
         const override = document.getElementById('overrideGain').checked;
         const rate = powerRates[curr]; const sym = symbols[curr];
 
@@ -281,7 +316,7 @@
         document.querySelectorAll('.p-weight').forEach(i => tW += parseFloat(i.value) || 0);
 
         const isHeavy = tW >= 500 && !override;
-        document.getElementById('ui-heavy-global-alert').style.display = isHeavy ? 'block' : 'none';
+        document.getElementById('ui-heavy-alert').style.display = isHeavy ? 'block' : 'none';
         markupInput.disabled = isHeavy;
 
         document.querySelectorAll('.part-card').forEach(card => {
@@ -290,30 +325,28 @@
             const dH = parseFloat(card.querySelector('.p-designH').value) || 0;
             const dP = parseFloat(card.querySelector('.p-designP').value) || 0;
 
-            const mat = (w / 1000) * costKg;
-            const elec = ((150 * h) / 1000) * rate;
+            const mat = (w/1000) * costKg;
+            const elec = ((150*h)/1000) * rate;
             const design = dH * dP;
-            const maint = h * (curr === 'SEK' ? 1 : 0.1); 
+            const maint = h * (curr === 'SEK' ? 1 : 0.1);
 
             const inv = mat + elec + design + maint;
-            let markup = isHeavy ? 80 : globalMarkup;
+            const m = isHeavy ? 80 : (parseFloat(markupInput.value) || 0);
 
             tMat += mat; tElec += elec; tDes += design; tMaint += maint;
-            tProfit += (inv * (markup / 100));
+            tProfit += (inv * (m/100));
         });
 
-        const final = tMat + tElec + tMaint + tDes + tProfit;
-        document.getElementById('master-mat').innerText = tMat.toFixed(2) + ' ' + sym;
-        document.getElementById('master-elec').innerText = (tElec + tMaint).toFixed(2) + ' ' + sym;
-        document.getElementById('master-design').innerText = tDes.toFixed(2) + ' ' + sym;
-        document.getElementById('master-profit').innerText = tProfit.toFixed(2) + ' ' + sym;
-        document.getElementById('master-total').innerText = final.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + sym;
+        const total = tMat + tElec + tMaint + tDes + tProfit;
+        document.getElementById('master-mat').innerText = tMat.toLocaleString(undefined, {minimumFractionDigits:2}) + ' ' + sym;
+        document.getElementById('master-elec').innerText = (tElec + tMaint).toLocaleString(undefined, {minimumFractionDigits:2}) + ' ' + sym;
+        document.getElementById('master-design').innerText = tDes.toLocaleString(undefined, {minimumFractionDigits:2}) + ' ' + sym;
+        document.getElementById('master-profit').innerText = tProfit.toLocaleString(undefined, {minimumFractionDigits:2}) + ' ' + sym;
+        document.getElementById('master-total').innerText = total.toLocaleString(undefined, {minimumFractionDigits:2}) + ' ' + sym;
     }
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js?v=' + Date.now());
-    }
     addPart();
+    setLang('es');
 </script>
 </body>
 </html>
