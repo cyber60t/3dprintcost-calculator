@@ -58,7 +58,6 @@
 
         .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
 
-        /* Estilos de Tarjetas de Piezas */
         .part-card {
             border: 1px solid #333;
             padding: 1.5em;
@@ -103,9 +102,6 @@
             border: 1px solid #333; padding: 10px;
         }
 
-        .toggle-container input { width: auto; }
-
-        /* Resumen Maestro Final */
         .master-summary {
             margin-top: 2em;
             border: 2px solid var(--neon-green);
@@ -126,7 +122,6 @@
             padding: 1.5em;
             text-align: center;
             margin-top: 1em;
-            box-shadow: var(--neon-glow);
         }
 
         .total-price { font-size: 2.5em; font-weight: 900; display: block; }
@@ -135,11 +130,6 @@
             width: 100%; background: transparent; color: var(--neon-green);
             border: 2px dashed var(--neon-green); padding: 15px;
             cursor: pointer; font-weight: bold; margin-bottom: 2em;
-        }
-
-        .disclaimer-text {
-            margin-top: 25px; font-size: 0.65em; color: #888; text-align: center;
-            line-height: 1.4; border-top: 1px solid #222; padding-top: 15px;
         }
 
         footer { text-align: center; font-size: 0.7em; margin-top: 2em; opacity: 0.5; }
@@ -164,7 +154,7 @@
     </header>
 
     <div class="input-group">
-        <label id="ui-currency-label">MONEDA / CURRENCY</label>
+        <label>MONEDA / CURRENCY</label>
         <select id="currency" onchange="calculateAll()">
             <optgroup label="Global">
                 <option value="USD">USD ($)</option>
@@ -173,14 +163,12 @@
             <optgroup label="Europe">
                 <option value="SEK">SEK (kr)</option>
                 <option value="GBP">GBP (£)</option>
-                <option value="CHF">CHF (Fr.)</option>
             </optgroup>
             <optgroup label="Latinoamérica">
                 <option value="MXN">MXN ($)</option>
                 <option value="COP">COP ($)</option>
                 <option value="ARS">ARS ($)</option>
                 <option value="CLP">CLP ($)</option>
-                <option value="BRL">BRL (R$)</option>
             </optgroup>
         </select>
     </div>
@@ -189,7 +177,7 @@
     <div class="row">
         <div class="input-group">
             <label id="ui-cost-kg">COSTO FILAMENTO /KG</label>
-            <input type="number" id="globalCostKg" value="25" step="0.1" oninput="calculateAll()">
+            <input type="number" id="globalCostKg" value="25" step="0.01" oninput="calculateAll()">
         </div>
         <div class="input-group">
             <label id="ui-markup">GANANCIA BASE (%)</label>
@@ -202,13 +190,12 @@
         <label id="ui-toggle-label">Liberar porcentaje manual (Ignorar regla 500g)</label>
     </div>
 
-    <div id="parts-container">
-        </div>
+    <div id="parts-container"></div>
 
     <button class="add-part-btn" onclick="addPart()" id="ui-add-part">+ AGREGAR OTRA PIEZA</button>
 
     <div class="master-summary">
-        <h2 id="ui-summary-title" style="text-align: center; border: none; margin-top: 0;">RESUMEN TOTAL DEL PEDIDO</h2>
+        <h2 id="ui-summary-title" style="text-align: center;">RESUMEN TOTAL</h2>
         <div class="summary-line">
             <span id="ui-total-inv">INVERSIÓN TOTAL:</span>
             <span id="master-inv" class="val">0.00</span>
@@ -228,17 +215,17 @@
         </div>
     </div>
 
-    <div class="disclaimer-text" id="ui-disclaimer">
-        Tarifas eléctricas promediadas regionalmente. Los cálculos finales son aproximaciones.
+    <div class="disclaimer-text" id="ui-disclaimer" style="font-size: 0.6em; color: #666; margin-top: 15px; text-align: center;">
+        Tarifas eléctricas promediadas regionalmente.
     </div>
 
-    <footer>CALCULATOR3D ULTIMATE - v7.5</footer>
+    <footer>CALCULATOR3D - v7.9 (Calculus Fix)</footer>
 </div>
 
 <script>
     let partCount = 0;
-    const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26, MXN: 2.10, COP: 750, ARS: 65, CLP: 145, BRL: 0.75 };
-    const currencySymbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr.", MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$" };
+    const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, MXN: 2.10, COP: 750, ARS: 65, CLP: 145 };
+    const symbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", MXN: "$", COP: "$", ARS: "$", CLP: "$" };
 
     const i18n = {
         es: {
@@ -247,9 +234,8 @@
             kwh: "CONSUMO TOTAL:", final: "PRECIO FINAL RECOMENDADO",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", 
             design: "DISEÑO (H)", remove: "ELIMINAR", watts: "WATTS",
-            warnWeight: "⚠️ Warning: +500g aplica 80% ganancia.",
+            warnWeight: "⚠️ +500g aplica 80% ganancia.",
             toggle: "Liberar porcentaje manual (Ignorar regla 500g)",
-            disclaimer: "Tarifas eléctricas promediadas regionalmente. Los cálculos finales son aproximaciones.",
             global: "CONFIGURACIÓN BASE", filament: "COSTO FILAMENTO /KG", markup: "GANANCIA BASE (%)"
         },
         en: {
@@ -258,9 +244,8 @@
             kwh: "TOTAL CONSUMPTION:", final: "RECOMMENDED FINAL PRICE",
             part: "PART", weight: "WEIGHT (G)", time: "TIME (H)", 
             design: "DESIGN (H)", remove: "REMOVE", watts: "WATTS",
-            warnWeight: "⚠️ Warning: +500g applies 80% profit.",
+            warnWeight: "⚠️ +500g applies 80% profit.",
             toggle: "Manual override (Ignore 500g rule)",
-            disclaimer: "Electricity rates are regional averages. Calculations are estimates.",
             global: "BASE SETTINGS", filament: "FILAMENT COST /KG", markup: "BASE PROFIT (%)"
         },
         sv: {
@@ -269,9 +254,8 @@
             kwh: "TOTAL FÖRBRUKNING:", final: "REKOMMENDERAT SLUTPRIS",
             part: "DEL", weight: "VIKT (G)", time: "TID (H)", 
             design: "DESIGN (H)", remove: "TA BORT", watts: "WATT",
-            warnWeight: "⚠️ Varning: +500g tillämpar 80% vinst.",
-            toggle: "Manuell justering (Ignorera 500g-regeln)",
-            disclaimer: "Elpriser är regionala genomsnitt. Beräkningar är uppskattningar.",
+            warnWeight: "⚠️ +500g tillämpar 80% vinst.",
+            toggle: "Manuell vinstjustering (Ignorera 500g-regeln)",
             global: "BASINSTÄLLNINGAR", filament: "FILAMENTKOSTNAD /KG", markup: "BASVINST (%)"
         }
     };
@@ -293,7 +277,6 @@
                     <div class="input-group">
                         <label>${i18n[currentLang].weight}</label>
                         <input type="number" class="p-weight" value="0" step="0.1" oninput="calculateAll()">
-                        <span class="warning-text">${i18n[currentLang].warnWeight}</span>
                     </div>
                     <div class="input-group">
                         <label>${i18n[currentLang].time}</label>
@@ -310,7 +293,7 @@
                         <input type="number" class="p-watts" value="150" oninput="calculateAll()">
                     </div>
                 </div>
-                <div class="alert-heavy" id="heavy-${partCount}">GANANCIA 80% APLICADA</div>
+                <div class="alert-heavy" id="heavy-${partCount}" style="display:none; color:#ff0055; font-size:0.7em;">⚠️ RIESGO +500G: GANANCIA 80%</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', partHtml);
@@ -335,21 +318,11 @@
         document.getElementById('ui-cost-kg').innerText = t.filament;
         document.getElementById('ui-markup').innerText = t.markup;
         document.getElementById('ui-toggle-label').innerText = t.toggle;
-        document.getElementById('ui-disclaimer').innerText = t.disclaimer;
 
         document.querySelectorAll('.lang-bar .control-btn').forEach(b => {
             b.classList.remove('active');
             if(b.id === 'btn-' + lang) b.classList.add('active');
         });
-
-        document.querySelectorAll('.part-card').forEach(card => {
-            card.querySelector('.warning-text').innerText = t.warnWeight;
-            card.querySelector('.remove-btn').innerText = t.remove;
-            const labels = card.querySelectorAll('label');
-            labels[0].innerText = t.weight; labels[1].innerText = t.time;
-            labels[2].innerText = t.design; labels[3].innerText = t.watts;
-        });
-
         calculateAll();
     }
 
@@ -358,7 +331,7 @@
         const globalCostKg = parseFloat(document.getElementById('globalCostKg').value) || 0;
         const globalMarkup = parseFloat(document.getElementById('globalMarkup').value) || 0;
         const manualOverride = document.getElementById('overrideGain').checked;
-        const sym = currencySymbols[curr];
+        const sym = symbols[curr];
         const rate = powerRates[curr];
 
         let totalInv = 0;
@@ -371,15 +344,24 @@
             const d = parseFloat(card.querySelector('.p-design').value) || 0;
             const p = parseFloat(card.querySelector('.p-watts').value) || 0;
 
-            const matCost = (w * (globalCostKg / 1000));
+            // 1. COSTO FILAMENTO: (Gramos / 1000) * Precio_Kilo
+            const matCost = (w / 1000) * globalCostKg;
+            
+            // 2. COSTO ELÉCTRICO: (Watts * Horas / 1000) * Tarifa
             const kwh = (p * t) / 1000;
             const elecCost = kwh * rate;
-            const maintenance = t * (curr === 'USD' ? 0.50 : 1.5);
-            const designLabor = d * (curr === 'USD' ? 25 : 250);
-
-            const partInv = matCost + elecCost + maintenance + designLabor;
             
-            // Lógica 500g
+            // 3. MANTENIMIENTO: Valor fijo por hora (aprox 0.20 USD o equivalente)
+            const hourlyMaint = curr === 'USD' ? 0.25 : (rate * 0.5);
+            const maintCost = t * hourlyMaint;
+
+            // 4. LABOR DISEÑO: (Horas Diseño * Tarifa Hora)
+            // Tarifa diseño fija estimada (puedes ajustar esta lógica si quieres una casilla global)
+            const designLabor = d * (curr === 'USD' ? 25 : (rate * 100));
+
+            const partCostBase = matCost + elecCost + maintCost + designLabor;
+            
+            // 5. PORCENTAJE DE GANANCIA
             let partMarkup = globalMarkup;
             const alert = card.querySelector('.alert-heavy');
             if (w >= 500 && !manualOverride) {
@@ -389,22 +371,21 @@
                 alert.style.display = 'none';
             }
 
-            const partProfit = partInv * (partMarkup / 100);
+            const partProfit = partCostBase * (partMarkup / 100);
 
-            totalInv += partInv;
+            totalInv += partCostBase;
             totalProfit += partProfit;
             totalKWh += kwh;
         });
 
         const finalPrice = totalInv + totalProfit;
 
-        document.getElementById('master-inv').innerText = `${totalInv.toLocaleString()} ${sym}`;
-        document.getElementById('master-profit').innerText = `${totalProfit.toLocaleString()} ${sym}`;
+        document.getElementById('master-inv').innerText = `${totalInv.toFixed(2)} ${sym}`;
+        document.getElementById('master-profit').innerText = `${totalProfit.toFixed(2)} ${sym}`;
         document.getElementById('master-kwh').innerText = `${totalKWh.toFixed(3)} kWh`;
-        document.getElementById('master-total').innerText = `${finalPrice.toLocaleString()} ${sym}`;
+        document.getElementById('master-total').innerText = `${finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${sym}`;
     }
 
-    // Init
     addPart();
     setLang('es');
 </script>
