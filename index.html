@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -57,15 +56,15 @@
 
         .control-btn {
             background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
-            padding: 5px 10px; cursor: pointer; font-size: 0.7em;
+            padding: 5px 10px; cursor: pointer; font-size: 0.7em; text-transform: uppercase;
         }
 
-        .control-btn.active { background: var(--neon-green); color: #000; }
+        .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
 
         h2 { font-size: 0.9em; border-left: 4px solid var(--neon-green); padding-left: 10px; margin: 1.5em 0 1em 0; text-transform: uppercase; }
 
         .input-group { margin-bottom: 1em; }
-        label { display: block; font-size: 0.75em; margin-bottom: 0.4em; opacity: 0.8; }
+        label { display: block; font-size: 0.75em; margin-bottom: 0.4em; opacity: 0.8; font-weight: bold; }
         
         input, select {
             width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green);
@@ -95,6 +94,7 @@
         .alert-heavy {
             font-size: 0.75em; color: #fff; background: #ff0055;
             padding: 8px; display: none; margin: 10px 0; text-align: center; font-weight: bold;
+            border: 1px solid white;
         }
 
         .recommended-price {
@@ -118,6 +118,10 @@
                 <button class="control-btn" id="btn-sv" onclick="setLang('sv')">SV</button>
                 <button class="control-btn active" id="btn-es" onclick="setLang('es')">ES</button>
             </div>
+            <div class="scale-bar">
+                <button class="control-btn" onclick="setScale('100%')">100%</button>
+                <button class="control-btn" onclick="setScale('125%')">125%</button>
+            </div>
         </div>
     </header>
 
@@ -133,24 +137,24 @@
     <div class="row">
         <div class="input-group">
             <label id="ui-weight">PESO DE PIEZA (G)</label>
-            <input type="number" id="weight" value="0" oninput="calculate()">
+            <input type="number" id="weight" value="0" step="0.1" oninput="calculate()">
             <div id="heavy-alert" class="alert-heavy">RIESGO MÁX: +400G (80% GANANCIA)</div>
         </div>
         <div class="input-group">
             <label id="ui-cost-kg">COSTO FILAMENTO /KG</label>
-            <input type="number" id="costKg" value="0" oninput="calculate()">
+            <input type="number" id="costKg" value="0" step="0.1" oninput="calculate()">
         </div>
     </div>
     
     <div class="row">
         <div class="input-group">
             <label id="ui-time">TIEMPO IMPRESIÓN (H)</label>
-            <input type="number" id="time" value="0" oninput="calculate()">
+            <input type="number" id="time" value="0" step="0.1" oninput="calculate()">
         </div>
         <div class="input-group">
             <label id="ui-power">POTENCIA IMPRESORA (W)</label>
             <input type="number" id="power" value="150" oninput="calculate()">
-            <span class="warning-text">⚠️ Warning: Consumo kW aproximado según modelo y temperatura.</span>
+            <span class="warning-text">⚠️ Warning: Consumo kW aproximado según modelo.</span>
         </div>
     </div>
 
@@ -158,7 +162,7 @@
     <div class="row">
         <div class="input-group">
             <label id="ui-design-time">TIEMPO DISEÑO (H)</label>
-            <input type="number" id="designTime" value="0" oninput="calculate()">
+            <input type="number" id="designTime" value="0" step="0.1" oninput="calculate()">
         </div>
         <div class="input-group">
             <label id="ui-design-rate">PRECIO DISEÑO /H</label>
@@ -183,7 +187,7 @@
         <span class="price-display" id="total-price">0.00 $</span>
     </div>
 
-    <footer>CALCULATOR3D SYSTEM - v5.0</footer>
+    <footer>CALCULATOR3D SYSTEM - v5.1</footer>
 </div>
 
 <script>
@@ -207,8 +211,20 @@
             invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO DE VENTA RECOMENDADO",
             heavy: "RIESGO MÁX: +400G (80% GANANCIA)",
             warn: "⚠️ Warning: Consumo kW aproximado según modelo."
+        },
+        sv: {
+            weight: "VIKT (G)", costKg: "FILAMENTKOSTNAD /KG", time: "UTSKRIFTSTID (H)",
+            currency: "VALUTA", markup: "BASVINST (%)", power: "EFFEKT (W)",
+            designTime: "DESIGNTID (H)", designRate: "TIMPRIS DESIGN",
+            secMat: "MATERIAL & UTSKRIFT", secDesign: "DESIGN & ARBETE",
+            invMat: "MATERIALKOSTNAD:", invElec: "ELKOSTNAD:",
+            invDesign: "DESIGNARBETE:", profit: "NETTOVINST:", total: "REKOMMENDERAT PRIS",
+            heavy: "MAX RISK: +400G (80% VINST)",
+            warn: "⚠️ Varning: kW-förbrukning är en uppskattning."
         }
     };
+
+    function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
 
     function setLang(lang) {
         const t = i18n[lang];
@@ -248,29 +264,25 @@
         const currency = document.getElementById('currency').value;
         const symbol = currency === 'USD' ? '$' : 'kr';
 
-        // Lógica de Ganancia Automática
         let finalMarkup = (weight >= 400) ? 80 : baseMarkup;
         document.getElementById('heavy-alert').style.display = (weight >= 400) ? 'block' : 'none';
 
-        // Cálculos
         const matCost = (weight * (costKg / 1000));
         
         // CÁLCULO DE kW y COSTO ELÉCTRICO
-        const powerKW = powerW / 1000; // Convierte W a kW
-        const totalKWh = powerKW * time; // Energía total consumida
-        const kwhPrice = (currency === 'USD') ? 0.22 : 2.80; // Precio luz est.
+        const powerKW = powerW / 1000;
+        const totalKWh = powerKW * time;
+        const kwhPrice = (currency === 'USD') ? 0.22 : 2.80;
         const elecCost = totalKWh * kwhPrice;
 
         const designLabor = designTime * designRate;
-        const maintenance = time * 0.50; // Desgaste
+        const maintenance = time * 0.50;
 
         const totalInvestment = matCost + elecCost + designLabor + maintenance;
         const netProfit = totalInvestment * (finalMarkup / 100);
         const finalPrice = totalInvestment + netProfit;
 
-        // Renderizado de resultados
         document.getElementById('res-mat').innerText = `${matCost.toFixed(2)} ${symbol}`;
-        // Aquí mostramos el valor en kW/h consumido junto al costo en dinero
         document.getElementById('res-elec').innerText = `${totalKWh.toFixed(3)} kWh (${elecCost.toFixed(2)} ${symbol})`;
         document.getElementById('res-design').innerText = `${designLabor.toFixed(2)} ${symbol}`;
         document.getElementById('res-profit').innerText = `${netProfit.toFixed(2)} ${symbol}`;
