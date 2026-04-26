@@ -92,7 +92,8 @@
         }
 
         .toggle-container {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 1em; font-size: 0.8em;
+            display: flex; align-items: center; gap: 10px; margin: 1em 0; font-size: 0.8em;
+            border: 1px solid #333; padding: 10px;
         }
 
         .toggle-container input { width: auto; }
@@ -123,11 +124,15 @@
                 <button class="control-btn" id="btn-sv" onclick="setLang('sv')">SV</button>
                 <button class="control-btn active" id="btn-es" onclick="setLang('es')">ES</button>
             </div>
+            <div class="scale-bar">
+                <button class="control-btn" onclick="setScale('100%')">100%</button>
+                <button class="control-btn" onclick="setScale('125%')">125%</button>
+            </div>
         </div>
     </header>
 
     <div class="input-group">
-        <label id="ui-currency">MONEDA</label>
+        <label id="ui-currency">MONEDA / CURRENCY</label>
         <select id="currency" onchange="calculate()">
             <optgroup label="Global">
                 <option value="USD">USD ($)</option>
@@ -136,10 +141,14 @@
             <optgroup label="Europe">
                 <option value="SEK">SEK (kr)</option>
                 <option value="GBP">GBP (£)</option>
+                <option value="CHF">CHF (Fr.)</option>
             </optgroup>
             <optgroup label="Latinoamérica">
                 <option value="MXN">MXN ($)</option>
                 <option value="COP">COP ($)</option>
+                <option value="ARS">ARS ($)</option>
+                <option value="CLP">CLP ($)</option>
+                <option value="BRL">BRL (R$)</option>
             </optgroup>
         </select>
     </div>
@@ -205,10 +214,10 @@
     </div>
 
     <div class="disclaimer-text" id="ui-disclaimer">
-        Las tarifas eléctricas son promedios regionales estimados. Los cálculos finales son aproximaciones.
+        Tarifas eléctricas promediadas regionalmente. Los cálculos finales son aproximaciones.
     </div>
 
-    <footer>CALCULATOR3D - v6.5</footer>
+    <footer>CALCULATOR3D GLOBAL - v6.8</footer>
 </div>
 
 <script>
@@ -251,8 +260,15 @@
         }
     };
 
-    const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, MXN: 2.10, COP: 750 };
-    const currencySymbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", MXN: "$", COP: "$" };
+    const powerRates = { 
+        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26,
+        MXN: 2.10, COP: 750, ARS: 65, CLP: 145, BRL: 0.75 
+    };
+
+    const currencySymbols = { 
+        USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr.",
+        MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$" 
+    };
 
     function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
 
@@ -295,7 +311,6 @@
         const manualOverride = document.getElementById('overrideGain').checked;
         const curr = document.getElementById('currency').value;
 
-        // Lógica de Ganancia: Solo 80% si es 500g+ Y no está activado el override
         let finalMarkup = baseMarkup;
         if (weight >= 500 && !manualOverride) {
             finalMarkup = 80;
