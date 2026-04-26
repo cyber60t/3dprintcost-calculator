@@ -91,6 +91,12 @@
             border: 1px solid white;
         }
 
+        .toggle-container {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 1em; font-size: 0.8em;
+        }
+
+        .toggle-container input { width: auto; }
+
         .recommended-price {
             margin-top: 1.5em; padding: 1.2em; background: var(--neon-green);
             color: #000; text-align: center; box-shadow: var(--neon-glow);
@@ -117,15 +123,11 @@
                 <button class="control-btn" id="btn-sv" onclick="setLang('sv')">SV</button>
                 <button class="control-btn active" id="btn-es" onclick="setLang('es')">ES</button>
             </div>
-            <div class="scale-bar">
-                <button class="control-btn" onclick="setScale('100%')">100%</button>
-                <button class="control-btn" onclick="setScale('125%')">125%</button>
-            </div>
         </div>
     </header>
 
     <div class="input-group">
-        <label id="ui-currency">MONEDA / CURRENCY</label>
+        <label id="ui-currency">MONEDA</label>
         <select id="currency" onchange="calculate()">
             <optgroup label="Global">
                 <option value="USD">USD ($)</option>
@@ -134,14 +136,10 @@
             <optgroup label="Europe">
                 <option value="SEK">SEK (kr)</option>
                 <option value="GBP">GBP (£)</option>
-                <option value="CHF">CHF (Fr.)</option>
             </optgroup>
             <optgroup label="Latinoamérica">
                 <option value="MXN">MXN ($)</option>
                 <option value="COP">COP ($)</option>
-                <option value="ARS">ARS ($)</option>
-                <option value="CLP">CLP ($)</option>
-                <option value="BRL">BRL (R$)</option>
             </optgroup>
         </select>
     </div>
@@ -151,7 +149,7 @@
         <div class="input-group">
             <label id="ui-weight">PESO DE PIEZA (G)</label>
             <input type="number" id="weight" value="0" step="0.1" oninput="calculate()">
-            <div id="heavy-alert" class="alert-heavy">RIESGO MÁX: +400G (80% GANANCIA)</div>
+            <span class="warning-text" id="ui-weight-warning">⚠️ Warning: Piezas de +500g aplican tasa de riesgo (80% ganancia).</span>
         </div>
         <div class="input-group">
             <label id="ui-cost-kg">COSTO FILAMENTO /KG</label>
@@ -159,6 +157,8 @@
         </div>
     </div>
     
+    <div id="heavy-alert" class="alert-heavy">GANANCIA FIJA ACTIVADA (PIEZA PESADA)</div>
+
     <div class="row">
         <div class="input-group">
             <label id="ui-time">TIEMPO IMPRESIÓN (H)</label>
@@ -167,7 +167,6 @@
         <div class="input-group">
             <label id="ui-power">POTENCIA IMPRESORA (W)</label>
             <input type="number" id="power" value="150" oninput="calculate()">
-            <span class="warning-text">⚠️ Warning: Consumo kW aproximado según modelo.</span>
         </div>
     </div>
 
@@ -188,6 +187,11 @@
         <input type="number" id="markup" value="40" oninput="calculate()">
     </div>
 
+    <div class="toggle-container">
+        <input type="checkbox" id="overrideGain" onchange="calculate()">
+        <label id="ui-toggle-label">Liberar porcentaje manual (Ignorar regla 500g)</label>
+    </div>
+
     <div class="analysis-box">
         <div class="data-line"><span id="ui-inv-mat">COSTO MATERIAL:</span><span id="res-mat" class="val">0.00</span></div>
         <div class="data-line"><span id="ui-inv-elec">CONSUMO ELÉCTRICO:</span><span id="res-elec" class="val">0.00 kW/h</span></div>
@@ -196,7 +200,7 @@
     </div>
 
     <div class="recommended-price">
-        <label id="ui-total-lbl">PRECIO DE VENTA RECOMENDADO</label>
+        <label id="ui-total-lbl">PRECIO RECOMENDADO</label>
         <span class="price-display" id="total-price">0.00 $</span>
     </div>
 
@@ -204,56 +208,51 @@
         Las tarifas eléctricas son promedios regionales estimados. Los cálculos finales son aproximaciones.
     </div>
 
-    <footer>CALCULATOR3D GLOBAL - v6.0</footer>
+    <footer>CALCULATOR3D - v6.5</footer>
 </div>
 
 <script>
     const i18n = {
         en: {
             weight: "WEIGHT (G)", costKg: "FILAMENT COST /KG", time: "PRINT TIME (H)",
-            currency: "CURRENCY", markup: "BASE PROFIT (%)", power: "PRINTER POWER (W)",
+            markup: "BASE PROFIT (%)", power: "PRINTER POWER (W)",
             designTime: "DESIGN TIME (H)", designRate: "DESIGN RATE/H",
             secMat: "MATERIAL & PRINT", secDesign: "DESIGN & LABOR",
-            invMat: "MATERIAL COST:", invElec: "ELECTRIC CONSUMPTION:",
+            invMat: "MATERIAL COST:", invElec: "ELECTRICITY:",
             invDesign: "DESIGN LABOR:", profit: "NET PROFIT:", total: "RECOMMENDED PRICE",
-            heavy: "MAX RISK: +400G (80% PROFIT)",
-            warn: "⚠️ Warning: kW consumption is an estimate.",
-            disclaimer: "Electricity rates are regional averages. Final calculations are estimates."
+            warnWeight: "⚠️ Warning: Parts over 500g apply a risk rate (80% profit).",
+            toggle: "Manual override (Ignore 500g rule)",
+            heavy: "FIXED PROFIT ACTIVATED (HEAVY PART)",
+            disclaimer: "Electricity rates are estimated regional averages."
         },
         es: {
             weight: "PESO DE PIEZA (G)", costKg: "COSTO FILAMENTO /KG", time: "TIEMPO IMPRESIÓN (H)",
-            currency: "MONEDA", markup: "GANANCIA BASE (%)", power: "POTENCIA IMPRESORA (W)",
+            markup: "GANANCIA BASE (%)", power: "POTENCIA IMPRESORA (W)",
             designTime: "TIEMPO DISEÑO (H)", designRate: "PRECIO DISEÑO /H",
             secMat: "MATERIAL E IMPRESIÓN", secDesign: "DISEÑO Y LABOR",
-            invMat: "COSTO MATERIAL:", invElec: "CONSUMO ELÉCTRICO:",
+            invMat: "COSTO MATERIAL:", invElec: "CORRIENTE:",
             invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO RECOMENDADO",
-            heavy: "RIESGO MÁX: +400G (80% GANANCIA)",
-            warn: "⚠️ Warning: Consumo kW aproximado.",
-            disclaimer: "Tarifas eléctricas promediadas regionalmente. Los cálculos finales son aproximaciones."
+            warnWeight: "⚠️ Warning: Piezas de +500g aplican tasa de riesgo (80% ganancia).",
+            toggle: "Liberar porcentaje manual (Ignorar regla 500g)",
+            heavy: "GANANCIA FIJA ACTIVADA (PIEZA PESADA)",
+            disclaimer: "Las tarifas eléctricas son promedios regionales estimados."
         },
         sv: {
             weight: "VIKT (G)", costKg: "FILAMENTKOSTNAD /KG", time: "UTSKRIFTSTID (H)",
-            currency: "VALUTA", markup: "BASVINST (%)", power: "EFFEKT (W)",
+            markup: "BASVINST (%)", power: "EFFEKT (W)",
             designTime: "DESIGNTID (H)", designRate: "TIMPRIS DESIGN",
             secMat: "MATERIAL & UTSKRIFT", secDesign: "DESIGN & ARBETE",
             invMat: "MATERIALKOSTNAD:", invElec: "ELKOSTNAD:",
             invDesign: "DESIGNARBETE:", profit: "NETTOVINST:", total: "REKOMMENDERAT PRIS",
-            heavy: "MAX RISK: +400G (80% VINST)",
-            warn: "⚠️ Varning: kW-förbrukning är en uppskattning.",
-            disclaimer: "Elpriser är regionala genomsnitt. Slutliga beräkningar är uppskattningar."
+            warnWeight: "⚠️ Varning: Delar över 500g tillämpar riskmarginal (80% vinst).",
+            toggle: "Manuell vinstjustering (Ignorera 500g-regeln)",
+            heavy: "FIXERAD VINST AKTIVERAD (TUNG DEL)",
+            disclaimer: "Elpriser är uppskattade regionala genomsnitt."
         }
     };
 
-    // Base de datos de costos de electricidad por moneda (promedios 2026)
-    const powerRates = {
-        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26,
-        MXN: 2.10, COP: 750, ARS: 65, CLP: 145, BRL: 0.75
-    };
-
-    const currencySymbols = {
-        USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr.",
-        MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$"
-    };
+    const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, MXN: 2.10, COP: 750 };
+    const currencySymbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", MXN: "$", COP: "$" };
 
     function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
 
@@ -273,9 +272,10 @@
         document.getElementById('ui-inv-design').innerText = t.invDesign;
         document.getElementById('ui-profit').innerText = t.profit;
         document.getElementById('ui-total-lbl').innerText = t.total;
+        document.getElementById('ui-weight-warning').innerText = t.warnWeight;
+        document.getElementById('ui-toggle-label').innerText = t.toggle;
         document.getElementById('heavy-alert').innerText = t.heavy;
         document.getElementById('ui-disclaimer').innerText = t.disclaimer;
-        document.querySelector('.warning-text').innerText = t.warn;
 
         document.querySelectorAll('.lang-bar .control-btn').forEach(b => {
             b.classList.remove('active');
@@ -292,18 +292,29 @@
         const designTime = parseFloat(document.getElementById('designTime').value) || 0;
         const designRate = parseFloat(document.getElementById('designRate').value) || 0;
         const baseMarkup = parseFloat(document.getElementById('markup').value) || 0;
+        const manualOverride = document.getElementById('overrideGain').checked;
         const curr = document.getElementById('currency').value;
 
-        let finalMarkup = (weight >= 400) ? 80 : baseMarkup;
-        document.getElementById('heavy-alert').style.display = (weight >= 400) ? 'block' : 'none';
+        // Lógica de Ganancia: Solo 80% si es 500g+ Y no está activado el override
+        let finalMarkup = baseMarkup;
+        if (weight >= 500 && !manualOverride) {
+            finalMarkup = 80;
+            document.getElementById('heavy-alert').style.display = 'block';
+            document.getElementById('markup').disabled = true;
+            document.getElementById('markup').style.opacity = "0.5";
+        } else {
+            document.getElementById('heavy-alert').style.display = 'none';
+            document.getElementById('markup').disabled = false;
+            document.getElementById('markup').style.opacity = "1";
+        }
 
         const matCost = (weight * (costKg / 1000));
         const totalKWh = (powerW * time) / 1000;
         const elecCost = totalKWh * (powerRates[curr] || 0.22);
         const designLabor = designTime * designRate;
-        const maintenance = time * (curr === 'USD' ? 0.50 : (powerRates[curr] * 2)); 
+        const maintenance = time * (curr === 'USD' ? 0.50 : 1.5); 
 
-        const totalInvestment = matCost + elecCost + designLabor + (maintenance / 2);
+        const totalInvestment = matCost + elecCost + designLabor + maintenance;
         const netProfit = totalInvestment * (finalMarkup / 100);
         const finalPrice = totalInvestment + netProfit;
 
