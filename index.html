@@ -27,6 +27,13 @@
             background: var(--card-bg); width: 100%; max-width: 800px;
             padding: 2em; border: 2px solid var(--neon-green); box-shadow: var(--neon-glow);
         }
+        .refresh-zone { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .refresh-btn {
+            background: #39FF14; color: #000; border: none; padding: 10px 20px;
+            font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase;
+        }
+        .refresh-hint { font-size: 0.7em; margin-top: 8px; color: #888; display: block; }
+        
         header { text-align: center; border-bottom: 2px solid var(--neon-green); margin-bottom: 1.5em; padding-bottom: 1em; }
         .brand-name { font-size: 1.8em; font-weight: bold; letter-spacing: 4px; text-shadow: var(--neon-glow); }
         .controls-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
@@ -56,6 +63,11 @@
 <body>
 
 <div class="app-container">
+    <div class="refresh-zone">
+        <button class="refresh-btn" onclick="forceUpdate()" id="ui-refresh-btn">🔄 ACTUALIZAR APLICACIÓN</button>
+        <span class="refresh-hint" id="ui-refresh-hint">Presiona aquí para limpiar el sistema y hacer un nuevo cálculo</span>
+    </div>
+
     <header>
         <div class="brand-name">CALCULATOR3D</div>
         <div class="controls-row">
@@ -119,30 +131,28 @@
         Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones.
     </div>
 
-    <footer>CALCULATOR3D - v9.5 (Multi-Lang Fix)</footer>
+    <footer>CALCULATOR3D - v10.0 (Hard-Refresh)</footer>
 </div>
 
 <script>
-    const APP_VERSION = 'v9.5-' + Date.now(); 
+    // LÓGICA DE ACTUALIZACIÓN FORZADA
+    function forceUpdate() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+        // Limpiar caché y recargar
+        window.location.reload(true);
+    }
+
+    const APP_VERSION = 'v10.0-' + Date.now(); 
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').then(reg => {
-                reg.onupdatefound = () => {
-                    const installingWorker = reg.installing;
-                    installingWorker.onstatechange = () => {
-                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            window.location.reload();
-                        }
-                    };
-                };
-            });
-        });
-        let refreshing;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
-            window.location.reload();
-            refreshing = true;
+            navigator.serviceWorker.register('sw.js?v=' + APP_VERSION);
         });
     }
 
@@ -152,6 +162,7 @@
 
     const i18n = {
         es: {
+            refBtn: "🔄 ACTUALIZAR APLICACIÓN", refHint: "Presiona aquí para limpiar el sistema y hacer un nuevo cálculo",
             currLbl: "MONEDA / CURRENCY", add: "+ AGREGAR PIEZA", summary: "RESUMEN TOTAL DEL PEDIDO", profit: "GANANCIA NETA TOTAL:", final: "PRECIO FINAL RECOMENDADO",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", designH: "HORAS DISEÑO", designP: "PRECIO POR HORA DISEÑO", 
             remove: "ELIMINAR", watts: "WATTS", toggle: "Liberar porcentaje manual (Ignorar regla 500g)",
@@ -160,6 +171,7 @@
             heavy: "⚠️ RIESGO +500G: GANANCIA 80% ACTIVADA", disc: "Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones."
         },
         en: {
+            refBtn: "🔄 REFRESH APPLICATION", refHint: "Click here to clear the system for a new calculation",
             currLbl: "CURRENCY / MONEDA", add: "+ ADD PART", summary: "TOTAL ORDER SUMMARY", profit: "TOTAL NET PROFIT:", final: "RECOMMENDED FINAL PRICE",
             part: "PART", weight: "WEIGHT (G)", time: "PRINT TIME (H)", designH: "DESIGN HOURS", designP: "DESIGN PRICE PER HOUR", 
             remove: "REMOVE", watts: "WATTS", toggle: "Manual override (Ignore 500g rule)",
@@ -168,6 +180,7 @@
             heavy: "⚠️ +500G RISK: 80% PROFIT ACTIVATED", disc: "Regional average electricity rates and costs. Calculations are estimates."
         },
         sv: {
+            refBtn: "🔄 UPPDATERA APPEN", refHint: "Klicka här för att rensa systemet för en ny beräkning",
             currLbl: "VALUTA / CURRENCY", add: "+ LÄGG TILL DEL", summary: "TOTAL ORDER SAMMANFATTNING", profit: "TOTAL NETTOVINST:", final: "REKOMMENDERAT SLUTPRIS",
             part: "DEL", weight: "VIKT (G)", time: "UTSKRIFTSTID (H)", designH: "DESIGNTIMMAR", designP: "TIMPRIS DESIGN", 
             remove: "TA BORT", watts: "WATT", toggle: "Manuell vinstjustering (Ignorera 500g-regeln)",
@@ -183,6 +196,7 @@
     function addPart() {
         partCount++;
         const container = document.getElementById('parts-container');
+        // PRECIO FIJO A 50 (kr/USD/etc)
         const partHtml = `
             <div class="part-card" id="part-${partCount}">
                 <div class="part-header"><span class="ui-part-num">${i18n[currentLang].part} #${partCount}</span><button class="remove-btn" onclick="removePart(${partCount})">${i18n[currentLang].remove}</button></div>
@@ -192,7 +206,7 @@
                 </div>
                 <div class="row">
                     <div class="input-group"><label class="ui-dh-lbl">${i18n[currentLang].designH}</label><input type="number" class="p-designH" value="0" step="0.1" oninput="calculateAll()"></div>
-                    <div class="input-group"><label class="ui-dp-lbl">${i18n[currentLang].designP}</label><input type="number" class="p-designP" value="20" step="0.1" oninput="calculateAll()"></div>
+                    <div class="input-group"><label class="ui-dp-lbl">${i18n[currentLang].designP}</label><input type="number" class="p-designP" value="50" step="0.1" oninput="calculateAll()"></div>
                 </div>
                 <div class="input-group"><label class="ui-watts-lbl">${i18n[currentLang].watts}</label><input type="number" class="p-watts" value="150" oninput="calculateAll()"></div>
                 <div class="alert-heavy" id="heavy-${partCount}" style="display:none; color:#ff0055; font-size:0.7em; font-weight:bold;">${i18n[currentLang].heavy}</div>
@@ -206,6 +220,8 @@
 
     function setLang(lang) {
         currentLang = lang; const t = i18n[lang];
+        document.getElementById('ui-refresh-btn').innerText = t.refBtn;
+        document.getElementById('ui-refresh-hint').innerText = t.refHint;
         document.getElementById('ui-currency-label').innerText = t.currLbl;
         document.getElementById('ui-add-part').innerText = t.add; 
         document.getElementById('ui-summary-title').innerText = t.summary;
@@ -231,7 +247,6 @@
             card.querySelector('.ui-dp-lbl').innerText = t.designP;
             card.querySelector('.ui-watts-lbl').innerText = t.watts;
             card.querySelector('.remove-btn').innerText = t.remove;
-            if(card.querySelector('.alert-heavy').style.display === 'block') card.querySelector('.alert-heavy').innerText = t.heavy;
         });
         calculateAll();
     }
@@ -261,7 +276,6 @@
             const costBase = mat + elec + design + maint;
             let markup = (w >= 500 && !manualOverride) ? 80 : globalMarkup;
             card.querySelector('.alert-heavy').style.display = (w >= 500 && !manualOverride) ? 'block' : 'none';
-            card.querySelector('.alert-heavy').innerText = i18n[currentLang].heavy;
 
             tMat += mat; tElec += elec; tDesign += design; tKwh += kwh;
             tProfit += (costBase * (markup / 100));
