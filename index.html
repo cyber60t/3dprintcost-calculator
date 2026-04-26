@@ -7,6 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
     
     <style>
         :root {
@@ -114,10 +115,41 @@
         </div>
     </div>
 
-    <footer>CALCULATOR3D - v8.5 (Pro)</footer>
+    <div id="ui-disclaimer" style="font-size: 0.6em; color: #666; margin-top: 15px; text-align: center;">
+        Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones.
+    </div>
+
+    <footer>CALCULATOR3D - v9.0 (Cache-Auto-Clean)</footer>
 </div>
 
 <script>
+    // SISTEMA DE VERSIÓN Y LIMPIEZA DE CACHÉ
+    const APP_VERSION = 'v9.0-' + Date.now(); 
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            console.log('Nueva versión detectada. Actualizando...');
+                            window.location.reload();
+                        }
+                    };
+                };
+            });
+        });
+
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            window.location.reload();
+            refreshing = true;
+        });
+    }
+
+    // LÓGICA DE LA APLICACIÓN
     let partCount = 0;
     const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, MXN: 2.10, COP: 750, ARS: 65, CLP: 145 };
     const symbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", MXN: "$", COP: "$", ARS: "$", CLP: "$" };
