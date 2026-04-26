@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator3d - Pro Master</title>
+    <title>Calculator3d - Pro Master v11</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
     
     <style>
         :root {
@@ -32,8 +31,6 @@
             background: #39FF14; color: #000; border: none; padding: 10px 20px;
             font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase;
         }
-        .refresh-hint { font-size: 0.7em; margin-top: 8px; color: #888; display: block; }
-        
         header { text-align: center; border-bottom: 2px solid var(--neon-green); margin-bottom: 1.5em; padding-bottom: 1em; }
         .brand-name { font-size: 1.8em; font-weight: bold; letter-spacing: 4px; text-shadow: var(--neon-glow); }
         .controls-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
@@ -56,16 +53,16 @@
         .total-price { font-size: 2.5em; font-weight: 900; display: block; }
         .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin-bottom: 2em; }
         .toggle-container { display: flex; align-items: center; gap: 10px; margin: 1em 0; font-size: 0.8em; border: 1px solid #333; padding: 10px; }
-        .toggle-container input { width: auto; }
         footer { text-align: center; font-size: 0.7em; margin-top: 2em; opacity: 0.5; }
+        .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <div class="refresh-zone">
-        <button class="refresh-btn" onclick="forceUpdate()" id="ui-refresh-btn">🔄 ACTUALIZAR APLICACIÓN</button>
-        <span class="refresh-hint" id="ui-refresh-hint">Presiona aquí para limpiar el sistema y hacer un nuevo cálculo</span>
+        <button class="refresh-btn" onclick="forceUpdate()" id="ui-refresh-btn">🔄 ACTUALIZAR / NUEVO CÁLCULO</button>
+        <span style="font-size: 0.7em; margin-top: 8px; color: #888; display: block;" id="ui-refresh-hint">Presiona aquí para limpiar el sistema y hacer otro cálculo</span>
     </div>
 
     <header>
@@ -109,11 +106,13 @@
         <label id="ui-toggle-label">Liberar porcentaje manual (Ignorar regla 500g)</label>
     </div>
 
+    <div id="ui-heavy-global-alert" class="alert-heavy-global">⚠️ PESO TOTAL +500G: TARIFA 80% APLICADA A TODO</div>
+
     <div id="parts-container"></div>
     <button class="add-part-btn" onclick="addPart()" id="ui-add-part">+ AGREGAR PIEZA</button>
 
     <div class="master-summary">
-        <h2 id="ui-summary-title" style="text-align: center;">RESUMEN TOTAL DEL PEDIDO</h2>
+        <h2 id="ui-summary-title" style="text-align: center;">RESUMEN TOTAL</h2>
         <div class="summary-line"><span id="ui-total-mat-lbl">GASTO TOTAL FILAMENTO:</span><span id="master-mat" class="val">0.00</span></div>
         <div class="summary-line"><span id="ui-total-elec-lbl">GASTO TOTAL CORRIENTE:</span><span id="master-elec" class="val">0.00</span></div>
         <div class="summary-line"><span id="ui-total-design-lbl">GASTO TOTAL DISEÑO:</span><span id="master-design" class="val">0.00</span></div>
@@ -127,76 +126,58 @@
         </div>
     </div>
 
-    <div id="ui-disclaimer" style="font-size: 0.6em; color: #666; margin-top: 15px; text-align: center;">
-        Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones.
-    </div>
-
-    <footer>CALCULATOR3D - v10.0 (Hard-Refresh)</footer>
+    <footer>CALCULATOR3D - v11.0 (Global Weight Fix)</footer>
 </div>
 
 <script>
-    // LÓGICA DE ACTUALIZACIÓN FORZADA
     function forceUpdate() {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let registration of registrations) {
-                    registration.unregister();
-                }
-            });
+            navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
         }
-        // Limpiar caché y recargar
         window.location.reload(true);
     }
 
-    const APP_VERSION = 'v10.0-' + Date.now(); 
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js?v=' + APP_VERSION);
-        });
-    }
-
-    let partCount = 0;
     const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, MXN: 2.10, COP: 750, ARS: 65, CLP: 145 };
     const symbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", MXN: "$", COP: "$", ARS: "$", CLP: "$" };
 
     const i18n = {
         es: {
-            refBtn: "🔄 ACTUALIZAR APLICACIÓN", refHint: "Presiona aquí para limpiar el sistema y hacer un nuevo cálculo",
+            refBtn: "🔄 ACTUALIZAR / NUEVO CÁLCULO", refHint: "Presiona aquí para limpiar el sistema y hacer otro cálculo",
             currLbl: "MONEDA / CURRENCY", add: "+ AGREGAR PIEZA", summary: "RESUMEN TOTAL DEL PEDIDO", profit: "GANANCIA NETA TOTAL:", final: "PRECIO FINAL RECOMENDADO",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", designH: "HORAS DISEÑO", designP: "PRECIO POR HORA DISEÑO", 
             remove: "ELIMINAR", watts: "WATTS", toggle: "Liberar porcentaje manual (Ignorar regla 500g)",
             global: "CONFIGURACIÓN BASE", filament: "COSTO FILAMENTO /KG", markup: "GANANCIA BASE (%)",
             tMat: "GASTO TOTAL FILAMENTO:", tElec: "GASTO TOTAL CORRIENTE:", tDes: "GASTO TOTAL DISEÑO:", tKwh: "TOTAL kWh CONSUMIDOS:",
-            heavy: "⚠️ RIESGO +500G: GANANCIA 80% ACTIVADA", disc: "Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones."
+            heavyGlobal: "⚠️ PESO TOTAL +500G: TARIFA 80% APLICADA A TODO"
         },
         en: {
-            refBtn: "🔄 REFRESH APPLICATION", refHint: "Click here to clear the system for a new calculation",
+            refBtn: "🔄 REFRESH / NEW CALC", refHint: "Click here to clear and start a new calculation",
             currLbl: "CURRENCY / MONEDA", add: "+ ADD PART", summary: "TOTAL ORDER SUMMARY", profit: "TOTAL NET PROFIT:", final: "RECOMMENDED FINAL PRICE",
             part: "PART", weight: "WEIGHT (G)", time: "PRINT TIME (H)", designH: "DESIGN HOURS", designP: "DESIGN PRICE PER HOUR", 
             remove: "REMOVE", watts: "WATTS", toggle: "Manual override (Ignore 500g rule)",
             global: "BASE SETTINGS", filament: "FILAMENT COST /KG", markup: "BASE PROFIT (%)",
             tMat: "TOTAL FILAMENT COST:", tElec: "TOTAL ELECTRICITY COST:", tDes: "TOTAL DESIGN COST:", tKwh: "TOTAL kWh CONSUMED:",
-            heavy: "⚠️ +500G RISK: 80% PROFIT ACTIVATED", disc: "Regional average electricity rates and costs. Calculations are estimates."
+            heavyGlobal: "⚠️ TOTAL WEIGHT +500G: 80% PROFIT APPLIED TO ALL"
         },
         sv: {
-            refBtn: "🔄 UPPDATERA APPEN", refHint: "Klicka här för att rensa systemet för en ny beräkning",
+            refBtn: "🔄 UPPDATERA / NY BERÄKNING", refHint: "Klicka här för att rensa systemet och starta en ny beräkning",
             currLbl: "VALUTA / CURRENCY", add: "+ LÄGG TILL DEL", summary: "TOTAL ORDER SAMMANFATTNING", profit: "TOTAL NETTOVINST:", final: "REKOMMENDERAT SLUTPRIS",
             part: "DEL", weight: "VIKT (G)", time: "UTSKRIFTSTID (H)", designH: "DESIGNTIMMAR", designP: "TIMPRIS DESIGN", 
             remove: "TA BORT", watts: "WATT", toggle: "Manuell vinstjustering (Ignorera 500g-regeln)",
             global: "BASINSTÄLLNINGAR", filament: "FILAMENTKOSTNAD /KG", markup: "BASVINST (%)",
             tMat: "TOTAL FILAMENTKOSTNAD:", tElec: "TOTAL ELKOSTNAD:", tDes: "TOTAL DESIGNKOSTNAD:", tKwh: "TOTAL kWh FÖRBRUKAD:",
-            heavy: "⚠️ +500G RISK: 80% VINST AKTIVERAD", disc: "Regionala genomsnittliga elpriser och kostnader. Beräkningar är uppskattningar."
+            heavyGlobal: "⚠️ TOTALVIKT +500G: 80% VINST TILLÄMPAD PÅ ALLT"
         }
     };
 
     let currentLang = 'es';
+    let partCount = 0;
+
     function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
 
     function addPart() {
         partCount++;
         const container = document.getElementById('parts-container');
-        // PRECIO FIJO A 50 (kr/USD/etc)
         const partHtml = `
             <div class="part-card" id="part-${partCount}">
                 <div class="part-header"><span class="ui-part-num">${i18n[currentLang].part} #${partCount}</span><button class="remove-btn" onclick="removePart(${partCount})">${i18n[currentLang].remove}</button></div>
@@ -209,7 +190,6 @@
                     <div class="input-group"><label class="ui-dp-lbl">${i18n[currentLang].designP}</label><input type="number" class="p-designP" value="50" step="0.1" oninput="calculateAll()"></div>
                 </div>
                 <div class="input-group"><label class="ui-watts-lbl">${i18n[currentLang].watts}</label><input type="number" class="p-watts" value="150" oninput="calculateAll()"></div>
-                <div class="alert-heavy" id="heavy-${partCount}" style="display:none; color:#ff0055; font-size:0.7em; font-weight:bold;">${i18n[currentLang].heavy}</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', partHtml);
@@ -235,12 +215,14 @@
         document.getElementById('ui-cost-kg').innerText = t.filament;
         document.getElementById('ui-markup').innerText = t.markup; 
         document.getElementById('ui-toggle-label').innerText = t.toggle;
-        document.getElementById('ui-disclaimer').innerText = t.disc;
+        document.getElementById('ui-heavy-global-alert').innerText = t.heavyGlobal;
         
-        document.querySelectorAll('.lang-bar .control-btn').forEach(b => { b.classList.remove('active'); if(b.id === 'btn-' + lang) b.classList.add('active'); });
+        document.querySelectorAll('.control-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + lang).classList.add('active');
         
         document.querySelectorAll('.part-card').forEach(card => {
-            card.querySelector('.ui-part-num').innerText = `${t.part} #${card.id.split('-')[1]}`;
+            const idNum = card.id.split('-')[1];
+            card.querySelector('.ui-part-num').innerText = `${t.part} #${idNum}`;
             card.querySelector('.ui-weight-lbl').innerText = t.weight;
             card.querySelector('.ui-time-lbl').innerText = t.time;
             card.querySelector('.ui-dh-lbl').innerText = t.designH;
@@ -258,7 +240,15 @@
         const manualOverride = document.getElementById('overrideGain').checked;
         const sym = symbols[curr]; const rate = powerRates[curr];
 
-        let tMat = 0, tElec = 0, tDesign = 0, tKwh = 0, tProfit = 0;
+        let totalMat = 0, totalElec = 0, totalDesign = 0, totalKwh = 0, totalProfit = 0, totalWeight = 0;
+
+        // Primero calculamos el peso total para saber si aplica la regla global
+        document.querySelectorAll('.p-weight').forEach(input => {
+            totalWeight += parseFloat(input.value) || 0;
+        });
+
+        const isHeavyGlobal = totalWeight >= 500 && !manualOverride;
+        document.getElementById('ui-heavy-global-alert').style.display = isHeavyGlobal ? 'block' : 'none';
 
         document.querySelectorAll('.part-card').forEach(card => {
             const w = parseFloat(card.querySelector('.p-weight').value) || 0;
@@ -273,23 +263,27 @@
             const design = dH * dP;
             const maint = h * (rate * 0.1); 
 
-            const costBase = mat + elec + design + maint;
-            let markup = (w >= 500 && !manualOverride) ? 80 : globalMarkup;
-            card.querySelector('.alert-heavy').style.display = (w >= 500 && !manualOverride) ? 'block' : 'none';
+            const investmentPerPart = mat + elec + design + maint;
+            
+            // Si el total de piezas es >= 500g, se aplica 80% a todas.
+            // Si no, se usa el margen base global.
+            let markup = isHeavyGlobal ? 80 : globalMarkup;
 
-            tMat += mat; tElec += elec; tDesign += design; tKwh += kwh;
-            tProfit += (costBase * (markup / 100));
+            totalMat += mat; totalElec += elec; totalDesign += design; totalKwh += kwh;
+            totalProfit += (investmentPerPart * (markup / 100));
         });
 
-        const finalPrice = tMat + tElec + tDesign + tProfit;
-        document.getElementById('master-mat').innerText = `${tMat.toFixed(2)} ${sym}`;
-        document.getElementById('master-elec').innerText = `${tElec.toFixed(2)} ${sym}`;
-        document.getElementById('master-design').innerText = `${tDesign.toFixed(2)} ${sym}`;
-        document.getElementById('master-kwh').innerText = `${tKwh.toFixed(3)} kWh`;
-        document.getElementById('master-profit').innerText = `${tProfit.toFixed(2)} ${sym}`;
+        const finalPrice = totalMat + totalElec + totalDesign + totalProfit;
+
+        document.getElementById('master-mat').innerText = `${totalMat.toFixed(2)} ${sym}`;
+        document.getElementById('master-elec').innerText = `${totalElec.toFixed(2)} ${sym}`;
+        document.getElementById('master-design').innerText = `${totalDesign.toFixed(2)} ${sym}`;
+        document.getElementById('master-kwh').innerText = `${totalKwh.toFixed(3)} kWh`;
+        document.getElementById('master-profit').innerText = `${totalProfit.toFixed(2)} ${sym}`;
         document.getElementById('master-total').innerText = `${finalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${sym}`;
     }
 
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
     addPart(); setLang('es');
 </script>
 </body>
