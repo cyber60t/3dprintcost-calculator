@@ -104,7 +104,17 @@
 
         .price-display { font-size: 2.8em; font-weight: 900; display: block; }
 
-        footer { text-align: center; font-size: 0.7em; margin-top: 2em; opacity: 0.5; }
+        .disclaimer-text {
+            margin-top: 25px;
+            font-size: 0.65em;
+            color: #888;
+            text-align: center;
+            line-height: 1.4;
+            border-top: 1px solid #222;
+            padding-top: 15px;
+        }
+
+        footer { text-align: center; font-size: 0.7em; margin-top: 15px; opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -187,7 +197,11 @@
         <span class="price-display" id="total-price">0.00 $</span>
     </div>
 
-    <footer>CALCULATOR3D SYSTEM - v5.1</footer>
+    <div class="disclaimer-text" id="ui-disclaimer">
+        Las tarifas aplicadas sobre el costo de la corriente están basadas en un promedio aproximado de Suecia y EE. UU. Los cálculos finales son estimaciones.
+    </div>
+
+    <footer>CALCULATOR3D SYSTEM - v5.2</footer>
 </div>
 
 <script>
@@ -200,7 +214,8 @@
             invMat: "MATERIAL COST:", invElec: "ELECTRIC CONSUMPTION:",
             invDesign: "DESIGN LABOR:", profit: "NET PROFIT:", total: "RECOMMENDED SALE PRICE",
             heavy: "MAX RISK: +400G (80% PROFIT)",
-            warn: "⚠️ Warning: kW consumption is an estimate based on model."
+            warn: "⚠️ Warning: kW consumption is an estimate based on model.",
+            disclaimer: "Electricity rates are based on approximate averages for Sweden and the USA. Final calculations are estimates."
         },
         es: {
             weight: "PESO DE PIEZA (G)", costKg: "COSTO FILAMENTO /KG", time: "TIEMPO IMPRESIÓN (H)",
@@ -210,7 +225,8 @@
             invMat: "COSTO MATERIAL:", invElec: "CONSUMO ELÉCTRICO:",
             invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO DE VENTA RECOMENDADO",
             heavy: "RIESGO MÁX: +400G (80% GANANCIA)",
-            warn: "⚠️ Warning: Consumo kW aproximado según modelo."
+            warn: "⚠️ Warning: Consumo kW aproximado según modelo.",
+            disclaimer: "Las tarifas aplicadas sobre el costo de la corriente están basadas en un promedio aproximado de Suecia y EE. UU. Los cálculos finales son estimaciones."
         },
         sv: {
             weight: "VIKT (G)", costKg: "FILAMENTKOSTNAD /KG", time: "UTSKRIFTSTID (H)",
@@ -220,7 +236,8 @@
             invMat: "MATERIALKOSTNAD:", invElec: "ELKOSTNAD:",
             invDesign: "DESIGNARBETE:", profit: "NETTOVINST:", total: "REKOMMENDERAT PRIS",
             heavy: "MAX RISK: +400G (80% VINST)",
-            warn: "⚠️ Varning: kW-förbrukning är en uppskattning."
+            warn: "⚠️ Varning: kW-förbrukning är en uppskattning.",
+            disclaimer: "Elpriser är baserade på ungefärliga genomsnitt för Sverige och USA. Slutliga beräkningar är uppskattningar."
         }
     };
 
@@ -244,6 +261,7 @@
         document.getElementById('ui-profit').innerText = t.profit;
         document.getElementById('ui-total-lbl').innerText = t.total;
         document.getElementById('heavy-alert').innerText = t.heavy;
+        document.getElementById('ui-disclaimer').innerText = t.disclaimer;
         document.querySelector('.warning-text').innerText = t.warn;
 
         document.querySelectorAll('.lang-bar .control-btn').forEach(b => {
@@ -269,7 +287,6 @@
 
         const matCost = (weight * (costKg / 1000));
         
-        // CÁLCULO DE kW y COSTO ELÉCTRICO
         const powerKW = powerW / 1000;
         const totalKWh = powerKW * time;
         const kwhPrice = (currency === 'USD') ? 0.22 : 2.80;
