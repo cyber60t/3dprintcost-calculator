@@ -46,7 +46,6 @@
         .part-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .remove-btn { background: #ff0055; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 0.7em; }
         
-        /* CUADRO DE LIBERAR: REGRESADO A LA IZQUIERDA */
         .toggle-container { 
             width: 100%; 
             margin: 20px 0; 
@@ -55,7 +54,7 @@
             background: rgba(57, 255, 20, 0.05);
             display: flex; 
             align-items: center; 
-            justify-content: flex-start; /* Alineado a la izquierda */
+            justify-content: flex-start; 
             gap: 12px;
         }
         .toggle-container input { transform: scale(1.4); cursor: pointer; margin: 0; }
@@ -73,6 +72,8 @@
         
         .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin: 15px 0; }
         .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; }
+        
+        .disclaimer { font-size: 0.65em; text-align: center; margin-top: 20px; opacity: 0.6; line-height: 1.4; color: #fff; }
     </style>
 </head>
 <body>
@@ -126,7 +127,7 @@
 
     <div class="toggle-container">
         <input type="checkbox" id="overrideGain" onchange="calculateAll()">
-        <label for="overrideGain" id="ui-toggle-label">Liberar % manual (Ignorar 500g)</label>
+        <label for="overrideGain" id="ui-toggle-label">Libera la regla de error de impresion garantia mas de 500g de material</label>
     </div>
 
     <div class="master-summary">
@@ -137,6 +138,11 @@
         <div class="total-highlight">
             <span class="total-price" id="master-total">0.00 $</span>
         </div>
+    </div>
+
+    <div class="disclaimer">
+        * Las tarifas de los precios de corriente pueden variar. <br>
+        No es un cálculo exacto, es un aproximado.
     </div>
 </div>
 
@@ -159,19 +165,19 @@
         es: {
             refBtn: "🔄 REINICIAR / LIMPIAR CACHÉ", add: "+ PIEZA", summary: "RESUMEN", profit: "GANANCIA:", final: "PRECIO FINAL",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", designH: "H. DISEÑO", designP: "P. HORA", remove: "X",
-            toggle: "Liberar % manual (Ignorar 500g)", global: "BASE", filament: "FILAMENTO /KG", markup: "GANANCIA %",
+            toggle: "Libera la regla de error de impresion garantia mas de 500g de material", global: "BASE", filament: "FILAMENTO /KG", markup: "GANANCIA %",
             tMat: "FILAMENTO:", tElec: "CORRIENTE:", tDes: "DISEÑO:", heavy: "⚠️ +500G TOTAL: TARIFA 80% APLICADA"
         },
         en: {
             refBtn: "🔄 REFRESH / CLEAR CACHE", add: "+ PART", summary: "SUMMARY", profit: "PROFIT:", final: "FINAL PRICE",
             part: "PART", weight: "WEIGHT (G)", time: "TIME (H)", designH: "D. HOURS", designP: "H. RATE", remove: "X",
-            toggle: "Manual override (Ignore 500g)", global: "BASE", filament: "FILAMENT /KG", markup: "PROFIT %",
+            toggle: "Release print error rule guarantee over 500g material", global: "BASE", filament: "FILAMENT /KG", markup: "PROFIT %",
             tMat: "FILAMENT:", tElec: "POWER:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% APPLIED"
         },
         sv: {
             refBtn: "🔄 UPPDATERA / RENSA CACHE", add: "+ DEL", summary: "SAMMANFATTNING", profit: "VINST:", final: "SLUTPRIS",
             part: "DEL", weight: "VIKT (G)", time: "TID (H)", designH: "DESIGNTIMMAR", designP: "TIMPRIS", remove: "X",
-            toggle: "Manuell vinst (Ignorera 500g)", global: "BAS", filament: "FILAMENT /KG", markup: "VINST %",
+            toggle: "Frigör regel för utskriftsfel garanti över 500g material", global: "BAS", filament: "FILAMENT /KG", markup: "VINST %",
             tMat: "FILAMENT:", tElec: "ELKOSTNAD:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% VINST"
         }
     };
