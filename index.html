@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculator3d - Pro Master v13.0</title>
+    <title>Calculator3d - Pro Master v13.0 (Contraste Alto)</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
@@ -21,12 +21,12 @@
 
         body {
             background-color: var(--bg-dark);
-            /* FONDO MAESTRO: Fibra de carbono + Patrón repetitivo de Filamento y Dinero */
+            /* FONDO MAESTRO AJUSTADO: Se ha subido la opacidad del patrón SVG al 18% para mayor contraste */
             background-image: 
                 /* Capa 1: Sombra para legibilidad */
                 linear-gradient(rgba(5, 8, 10, 0.85), rgba(5, 8, 10, 0.85)),
-                /* Capa 2: Iconos de Dinero y Filamento Repetidos */
-                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2339FF14' fill-opacity='0.07'%3E%3Cpath d='M20 20c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10zm0 15h20v5H20zm5 10h10v5H25z'/%3E%3Ctext x='70' y='40' font-family='Arial' font-size='30' font-weight='bold'%3E%24%3C/text%3E%3Ctext x='20' y='90' font-family='Arial' font-size='25' font-weight='bold'%3Ekr%3C/text%3E%3Cpath d='M80 80c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9zm0-5c8 0 14 6 14 14s-6 14-14 14-14-6-14-14 6-14 14-14z'/%3E%3Ctext x='75' y='100' font-family='Arial' font-size='20' font-weight='bold'%3E%E2%82%AC%3C/text%3E%3C/g%3E%3C/svg%3E"),
+                /* Capa 2: Iconos de Dinero y Filamento Repetidos con ALTA OPACIDAD (0.18) */
+                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2339FF14' fill-opacity='0.18'%3E%3Cpath d='M20 20c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10zm0 15h20v5H20zm5 10h10v5H25z'/%3E%3Ctext x='70' y='40' font-family='Arial' font-size='30' font-weight='bold'%3E%24%3C/text%3E%3Ctext x='20' y='90' font-family='Arial' font-size='25' font-weight='bold'%3Ekr%3C/text%3E%3Cpath d='M80 80c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9zm0-5c8 0 14 6 14 14s-6 14-14 14-14-6-14-14 6-14 14-14z'/%3E%3Ctext x='75' y='100' font-family='Arial' font-size='20' font-weight='bold'%3E%E2%82%AC%3C/text%3E%3C/g%3E%3C/svg%3E"),
                 /* Capa 3: Textura Fibra de Carbono */
                 url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23111111' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
@@ -90,7 +90,7 @@
         .master-summary { margin-top: 10px; border: 2px solid var(--neon-green); padding: 1.5em; background: rgba(0,0,0,0.85); }
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85em; border-bottom: 1px dashed #222; padding-bottom: 4px; }
         .total-highlight { background: var(--neon-green); color: #000; padding: 1em; text-align: center; margin-top: 10px; box-shadow: var(--neon-glow); }
-        .total-price { font-size: 2.2em; font-weight: 900; display: block; }
+        .total-price { font-size: 2.2em; font-weight: 900; block; }
         
         .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin: 15px 0; text-transform: uppercase; }
         .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; border-radius: 4px; }
@@ -295,11 +295,11 @@
             const design = dH * dP;
             const maint = h * (curr === 'SEK' ? 1 : 0.1); 
 
-            const cost = mat + elec + design + maint;
-            const m = isHeavy ? 80 : baseMarkup;
+            const inv = mat + elec + design + maint;
+            let markup = isHeavy ? 80 : globalMarkup;
 
             tMat += mat; tElec += elec; tDes += design; tMaint += maint;
-            tProfit += (cost * (m / 100));
+            tProfit += (inv * (markup / 100));
         });
 
         const final = tMat + tElec + tMaint + tDes + tProfit;
