@@ -1,6 +1,6 @@
 {
   "name": "Calculator3d",
-  "short_name": "Calc3d",
+  "short_name": "Calc3D",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
