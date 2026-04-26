@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculator3d - Pro Master v12.6</title>
+    <title>Calculator3d - Pro Master v12.7</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
@@ -11,54 +11,94 @@
     <style>
         :root {
             --neon-green: #39FF14;
-            --neon-glow: 0 0 10px #39FF14;
-            --bg-dark: #000000;
-            --card-bg: #0a0a0a;
+            --neon-glow: 0 0 15px rgba(57, 255, 20, 0.7);
+            --bg-dark: #05080a;
+            --card-bg: rgba(10, 10, 10, 0.9);
             --base-scale: 100%;
         }
+        
         * { box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+
         body {
-            background-color: var(--bg-dark); color: var(--neon-green);
-            margin: 0; padding: 10px; font-size: var(--base-scale);
-            display: flex; justify-content: center;
+            background-color: var(--bg-dark);
+            /* Imagen de fondo sutil con filamentos y dinero */
+            background-image: 
+                linear-gradient(rgba(5, 8, 10, 0.9), rgba(5, 8, 10, 0.9)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png'),
+                url('https://img.icons8.com/ios/100/39FF14/3d-printer-filament.png'),
+                url('https://img.icons8.com/ios/100/39FF14/money-bag.png');
+            background-repeat: repeat, repeat, no-repeat, no-repeat;
+            background-position: center, center, 10% 20%, 90% 80%;
+            background-attachment: fixed;
+            background-size: auto, auto, 150px, 120px;
+            color: var(--neon-green);
+            margin: 0;
+            padding: 10px;
+            font-size: var(--base-scale);
+            display: flex;
+            justify-content: center;
         }
+
         .app-container {
-            background: var(--card-bg); width: 100%; max-width: 800px;
-            padding: 1.5em; border: 2px solid var(--neon-green); box-shadow: var(--neon-glow);
-            display: flex; flex-direction: column;
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            padding: 1.5em;
+            border: 2px solid var(--neon-green);
+            box-shadow: var(--neon-glow);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
         }
-        .refresh-zone { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+
+        .refresh-zone { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px; }
         .refresh-btn {
-            background: #39FF14; color: #000; border: none; padding: 12px;
+            background: var(--neon-green); color: #000; border: none; padding: 12px;
             font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%;
+            text-transform: uppercase; transition: 0.3s;
         }
+        .refresh-btn:hover { box-shadow: var(--neon-glow); transform: scale(1.01); }
+
         header { text-align: center; border-bottom: 2px solid var(--neon-green); margin-bottom: 1.5em; padding-bottom: 1em; }
-        .brand-name { font-size: 1.5em; font-weight: bold; letter-spacing: 2px; text-shadow: var(--neon-glow); }
+        .brand-name { font-size: 1.8em; font-weight: bold; letter-spacing: 4px; text-shadow: var(--neon-glow); }
+        
         .controls-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
         .control-btn {
             background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
-            padding: 8px; cursor: pointer; font-size: 0.7em; flex: 1;
+            padding: 8px; cursor: pointer; font-size: 0.7em; flex: 1; transition: 0.2s;
         }
-        .control-btn.active { background: var(--neon-green); color: #000; }
-        .part-card { border: 1px solid #333; padding: 1em; margin-bottom: 1em; background: #050505; }
-        .part-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
+
+        .part-card { border: 1px solid #333; padding: 1em; margin-bottom: 1em; background: rgba(0,0,0,0.6); position: relative; }
+        .part-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #222; }
         .remove-btn { background: #ff0055; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 0.7em; }
+        
         .toggle-container { 
             width: 100%; margin: 20px 0; padding: 15px; border: 1px solid #333; 
-            background: rgba(57, 255, 20, 0.05); display: flex; align-items: center; gap: 12px;
+            background: rgba(57, 255, 20, 0.1); display: flex; align-items: center; justify-content: flex-start; gap: 12px;
         }
+        .toggle-container input { transform: scale(1.4); cursor: pointer; }
+        .toggle-container label { font-size: 0.8em; font-weight: bold; color: #fff; cursor: pointer; }
+
         .input-group { margin-bottom: 1em; }
-        label { display: block; font-size: 0.7em; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px; font-size: 1em; }
-        input:disabled { opacity: 0.3; border-color: #333; }
+        label { display: block; font-size: 0.7em; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+        input, select { width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px; font-size: 1em; outline: none; }
+        input:focus { box-shadow: inset 0 0 5px var(--neon-green); }
+        input:disabled { opacity: 0.3; border-color: #444; }
+
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .master-summary { margin-top: 10px; border: 2px solid var(--neon-green); padding: 1.5em; background: rgba(57, 255, 20, 0.05); }
-        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85em; }
-        .total-highlight { background: var(--neon-green); color: #000; padding: 1em; text-align: center; margin-top: 10px; }
-        .total-price { font-size: 2em; font-weight: 900; }
-        .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin: 15px 0; }
-        .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; }
-        .disclaimer { font-size: 0.65em; text-align: center; margin-top: 20px; opacity: 0.6; line-height: 1.4; color: #fff; }
+        
+        .master-summary { margin-top: 10px; border: 2px solid var(--neon-green); padding: 1.5em; background: rgba(0,0,0,0.8); }
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85em; border-bottom: 1px dashed #222; padding-bottom: 4px; }
+        .total-highlight { background: var(--neon-green); color: #000; padding: 1em; text-align: center; margin-top: 10px; box-shadow: var(--neon-glow); }
+        .total-price { font-size: 2.2em; font-weight: 900; display: block; }
+        
+        .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin: 15px 0; text-transform: uppercase; }
+        .add-part-btn:hover { background: rgba(57, 255, 20, 0.05); }
+
+        .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; border-radius: 4px; }
+        .disclaimer { font-size: 0.65em; text-align: center; margin-top: 20px; opacity: 0.7; line-height: 1.4; color: #fff; font-style: italic; }
     </style>
 </head>
 <body>
@@ -86,11 +126,22 @@
     <div class="input-group">
         <label id="ui-currency-label">MONEDA / CURRENCY</label>
         <select id="currency" onchange="calculateAll()">
-            <option value="SEK">SEK (kr)</option>
-            <option value="USD">USD ($)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="COP">COP ($)</option>
-            <option value="MXN">MXN ($)</option>
+            <optgroup label="Más usadas">
+                <option value="SEK">SEK (kr)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+            </optgroup>
+            <optgroup label="Latinoamérica">
+                <option value="MXN">MXN ($)</option>
+                <option value="COP">COP ($)</option>
+                <option value="ARS">ARS ($)</option>
+                <option value="CLP">CLP ($)</option>
+                <option value="BRL">BRL (R$)</option>
+            </optgroup>
+            <optgroup label="Otros">
+                <option value="GBP">GBP (£)</option>
+                <option value="CHF">CHF (Fr)</option>
+            </optgroup>
         </select>
     </div>
 
@@ -108,7 +159,7 @@
     <div id="ui-heavy-global-alert" class="alert-heavy-global">⚠️ +500G TOTAL: TARIFA 80% APLICADA</div>
 
     <div id="parts-container"></div>
-    <button class="add-part-btn" onclick="addPart()" id="ui-add-part">+ PIEZA</button>
+    <button class="add-part-btn" onclick="addPart()" id="ui-add-part">+ AGREGAR PIEZA</button>
 
     <div class="toggle-container">
         <input type="checkbox" id="overrideGain" onchange="calculateAll()">
@@ -117,10 +168,11 @@
 
     <div class="master-summary">
         <div class="summary-line"><span id="ui-total-mat-lbl">FILAMENTO:</span><span id="master-mat">0.00</span></div>
-        <div class="summary-line"><span id="ui-total-elec-lbl">CORRIENTE:</span><span id="master-elec">0.00</span></div>
+        <div class="summary-line"><span id="ui-total-elec-lbl">CORRIENTE + MANT:</span><span id="master-elec">0.00</span></div>
         <div class="summary-line"><span id="ui-total-design-lbl">DISEÑO:</span><span id="master-design">0.00</span></div>
-        <div class="summary-line"><span id="ui-total-profit-lbl">GANANCIA:</span><span id="master-profit">0.00</span></div>
+        <div class="summary-line"><span id="ui-total-profit-lbl">GANANCIA NETA:</span><span id="master-profit">0.00</span></div>
         <div class="total-highlight">
+            <span id="ui-final-lbl" style="font-size: 0.7em; font-weight: bold; text-transform: uppercase;">Precio Final Sugerido</span>
             <span class="total-price" id="master-total">0.00 $</span>
         </div>
     </div>
@@ -139,32 +191,38 @@
         window.location.reload(true);
     }
 
-    const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, COP: 750, MXN: 2.10 };
-    const symbols = { USD: "$", EUR: "€", SEK: "kr", COP: "$", MXN: "$" };
+    const powerRates = { 
+        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26,
+        MXN: 2.10, COP: 750, ARS: 85, CLP: 145, BRL: 0.75 
+    };
+    const symbols = { 
+        USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr",
+        MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$" 
+    };
 
     const i18n = {
         es: {
-            refBtn: "🔄 REINICIAR / LIMPIAR CACHÉ", add: "+ PIEZA", profit: "GANANCIA:",
+            refBtn: "🔄 REINICIAR APP / LIMPIAR CACHÉ", add: "+ AGREGAR PIEZA", profit: "GANANCIA NETA:",
             curr: "MONEDA / CURRENCY", fkg: "FILAMENTO /KG", gperc: "GANANCIA %",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", dh: "H. DISEÑO", dp: "P. HORA", rem: "X",
             toggle: "Libera la regla de error de impresion garantia mas de 500g de material",
-            tMat: "FILAMENTO:", tElec: "CORRIENTE:", tDes: "DISEÑO:", heavy: "⚠️ +500G TOTAL: TARIFA 80% APLICADA",
+            tMat: "FILAMENTO:", tElec: "CORRIENTE + MANT:", tDes: "DISEÑO:", heavy: "⚠️ +500G TOTAL: TARIFA 80% APLICADA",
             disc: "* Las tarifas de los precios de corriente pueden variar. <br> No es un cálculo exacto, es un aproximado."
         },
         en: {
-            refBtn: "🔄 REFRESH / CLEAR CACHE", add: "+ PART", profit: "PROFIT:",
+            refBtn: "🔄 REFRESH APP / CLEAR CACHE", add: "+ ADD PART", profit: "NET PROFIT:",
             curr: "CURRENCY / MONEDA", fkg: "FILAMENT /KG", gperc: "PROFIT %",
             part: "PART", weight: "WEIGHT (G)", time: "TIME (H)", dh: "D. HOURS", dp: "H. RATE", rem: "X",
             toggle: "Release print error rule guarantee over 500g material",
-            tMat: "FILAMENT:", tElec: "POWER:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% APPLIED",
+            tMat: "FILAMENT:", tElec: "POWER + MAINT:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% APPLIED",
             disc: "* Electricity rates may vary. <br> It is not an exact calculation, it is an approximation."
         },
         sv: {
-            refBtn: "🔄 UPPDATERA / RENSA CACHE", add: "+ DEL", profit: "VINST:",
+            refBtn: "🔄 UPPDATERA APPEN / RENSA CACHE", add: "+ LÄGG TILL DEL", profit: "NETTOVINST:",
             curr: "VALUTA / CURRENCY", fkg: "FILAMENT /KG", gperc: "VINST %",
             part: "DEL", weight: "VIKT (G)", time: "TID (H)", dh: "DESIGNTIMMAR", dp: "TIMPRIS", rem: "X",
             toggle: "Frigör regel för utskriftsfel garanti över 500g material",
-            tMat: "FILAMENT:", tElec: "ELKOSTNAD:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% VINST",
+            tMat: "FILAMENT:", tElec: "EL + UNDERHÅLL:", tDes: "DESIGN:", heavy: "⚠️ +500G TOTAL: 80% VINST",
             disc: "* Elpriserna kan variera. <br> Det är inte en exakt beräkning, det är en uppskattning."
         }
     };
@@ -232,11 +290,9 @@
         const rate = powerRates[curr]; const sym = symbols[curr];
 
         let tMat = 0, tElec = 0, tDes = 0, tProfit = 0, tW = 0, tMaint = 0;
-        
-        // Peso Total para la regla de 500g
         document.querySelectorAll('.p-weight').forEach(i => tW += parseFloat(i.value) || 0);
+
         const isHeavy = tW >= 500 && !override;
-        
         document.getElementById('ui-heavy-global-alert').style.display = isHeavy ? 'block' : 'none';
         markupInput.disabled = isHeavy;
 
@@ -246,32 +302,26 @@
             const dH = parseFloat(card.querySelector('.p-designH').value) || 0;
             const dP = parseFloat(card.querySelector('.p-designP').value) || 0;
 
-            // MATEMÁTICA PURA (Sin redondeos intermedios)
             const mat = (w / 1000) * costKg;
             const elec = ((150 * h) / 1000) * rate;
             const design = dH * dP;
-            // Mantenimiento estandarizado (aprox 0.1 USD/h o equivalente)
-            const maint = h * (curr === 'SEK' ? 1 : 0.1);
+            const maint = h * (curr === 'SEK' ? 1 : 0.1); 
 
             const cost = mat + elec + design + maint;
             const m = isHeavy ? 80 : baseMarkup;
 
-            tMat += mat; 
-            tElec += elec; 
-            tDes += design; 
-            tMaint += maint; // Ahora se suma correctamente al flujo
+            tMat += mat; tElec += elec; tDes += design; tMaint += maint;
             tProfit += (cost * (m / 100));
         });
 
-        // El precio final es la suma de todas las inversiones (incluyendo mantenimiento) + la ganancia calculada
-        const finalTotal = tMat + tElec + tDes + tMaint + tProfit;
+        const total = tMat + tElec + tMaint + tDes + tProfit;
+        const locale = (curr === 'COP' || curr === 'MXN') ? 'es-MX' : undefined;
 
-        // FORMATEO VISUAL FINAL (Solo aquí se redondea para la vista)
-        document.getElementById('master-mat').innerText = tMat.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-elec').innerText = (tElec + tMaint).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym; // Se muestra Elec + Maint para simplicidad
-        document.getElementById('master-design').innerText = tDes.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-profit').innerText = tProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-total').innerText = finalTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-mat').innerText = tMat.toLocaleString(locale, {minimumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-elec').innerText = (tElec + tMaint).toLocaleString(locale, {minimumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-design').innerText = tDes.toLocaleString(locale, {minimumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-profit').innerText = tProfit.toLocaleString(locale, {minimumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-total').innerText = total.toLocaleString(locale, {minimumFractionDigits: 2}) + ' ' + sym;
     }
 
     if ('serviceWorker' in navigator) {
