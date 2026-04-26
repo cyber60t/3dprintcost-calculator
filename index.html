@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculator3d - Pro Master v12.9</title>
+    <title>Calculator3d - Pro Master v13.0</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
@@ -13,7 +13,7 @@
             --neon-green: #39FF14;
             --neon-glow: 0 0 15px rgba(57, 255, 20, 0.7);
             --bg-dark: #05080a;
-            --card-bg: rgba(10, 10, 10, 0.93);
+            --card-bg: rgba(10, 10, 10, 0.95);
             --base-scale: 100%;
         }
         
@@ -21,14 +21,16 @@
 
         body {
             background-color: var(--bg-dark);
-            /* FONDO CORREGIDO: Patrón infinito de filamentos y dinero con SVG integrado */
+            /* FONDO MAESTRO: Fibra de carbono + Patrón repetitivo de Filamento y Dinero */
             background-image: 
-                linear-gradient(rgba(5, 8, 10, 0.88), rgba(5, 8, 10, 0.88)),
-                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2339FF14' fill-opacity='0.04'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3Cpath d='M15 15h1v1h-1zM65 40h1v1h-1z'/%3E%3C/g%3E%3C/svg%3E"),
-                url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231a1a1a' fill-opacity='0.5'%3E%3Cpath d='M0 0h10v10H0V0zm10 10h10v10H10V10z'/%3E%3C/g%3E%3C/svg%3E");
+                /* Capa 1: Sombra para legibilidad */
+                linear-gradient(rgba(5, 8, 10, 0.85), rgba(5, 8, 10, 0.85)),
+                /* Capa 2: Iconos de Dinero y Filamento Repetidos */
+                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2339FF14' fill-opacity='0.07'%3E%3Cpath d='M20 20c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10zm0 15h20v5H20zm5 10h10v5H25z'/%3E%3Ctext x='70' y='40' font-family='Arial' font-size='30' font-weight='bold'%3E%24%3C/text%3E%3Ctext x='20' y='90' font-family='Arial' font-size='25' font-weight='bold'%3Ekr%3C/text%3E%3Cpath d='M80 80c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9zm0-5c8 0 14 6 14 14s-6 14-14 14-14-6-14-14 6-14 14-14z'/%3E%3Ctext x='75' y='100' font-family='Arial' font-size='20' font-weight='bold'%3E%E2%82%AC%3C/text%3E%3C/g%3E%3C/svg%3E"),
+                /* Capa 3: Textura Fibra de Carbono */
+                url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23111111' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
             background-repeat: repeat;
             background-attachment: fixed;
-            background-size: auto, 120px, auto;
             color: var(--neon-green);
             margin: 0;
             padding: 10px;
@@ -44,7 +46,7 @@
             padding: 1.5em;
             border: 2px solid var(--neon-green);
             box-shadow: var(--neon-glow);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             z-index: 1;
@@ -56,7 +58,6 @@
             font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%;
             text-transform: uppercase; transition: 0.3s;
         }
-        .refresh-btn:hover { box-shadow: var(--neon-glow); transform: scale(1.01); }
 
         header { text-align: center; border-bottom: 2px solid var(--neon-green); margin-bottom: 1.5em; padding-bottom: 1em; }
         .brand-name { font-size: 1.8em; font-weight: bold; letter-spacing: 4px; text-shadow: var(--neon-glow); }
@@ -68,7 +69,7 @@
         }
         .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
 
-        .part-card { border: 1px solid #333; padding: 1em; margin-bottom: 1em; background: rgba(0,0,0,0.6); position: relative; }
+        .part-card { border: 1px solid #333; padding: 1em; margin-bottom: 1em; background: rgba(0,0,0,0.7); position: relative; }
         .part-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #222; }
         .remove-btn { background: #ff0055; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 0.7em; }
         
@@ -82,21 +83,18 @@
         .input-group { margin-bottom: 1em; }
         label { display: block; font-size: 0.7em; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
         input, select { width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 10px; font-size: 1em; outline: none; }
-        input:focus { box-shadow: inset 0 0 5px var(--neon-green); }
         input:disabled { opacity: 0.3; border-color: #444; }
 
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         
-        .master-summary { margin-top: 10px; border: 2px solid var(--neon-green); padding: 1.5em; background: rgba(0,0,0,0.8); }
+        .master-summary { margin-top: 10px; border: 2px solid var(--neon-green); padding: 1.5em; background: rgba(0,0,0,0.85); }
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85em; border-bottom: 1px dashed #222; padding-bottom: 4px; }
         .total-highlight { background: var(--neon-green); color: #000; padding: 1em; text-align: center; margin-top: 10px; box-shadow: var(--neon-glow); }
         .total-price { font-size: 2.2em; font-weight: 900; display: block; }
         
         .add-part-btn { width: 100%; background: transparent; color: var(--neon-green); border: 2px dashed var(--neon-green); padding: 15px; cursor: pointer; font-weight: bold; margin: 15px 0; text-transform: uppercase; }
-        .add-part-btn:hover { background: rgba(57, 255, 20, 0.05); }
-
         .alert-heavy-global { display: none; background: #ff0055; color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.8em; margin-bottom: 10px; border-radius: 4px; }
-        .disclaimer { font-size: 0.65em; text-align: center; margin-top: 20px; opacity: 0.7; line-height: 1.4; color: #fff; font-style: italic; }
+        .disclaimer { font-size: 0.65em; text-align: center; margin-top: 20px; opacity: 0.8; line-height: 1.4; color: #fff; font-style: italic; }
     </style>
 </head>
 <body>
@@ -182,11 +180,11 @@
     }
 
     const powerRates = { 
-        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26,
+        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24,
         MXN: 2.10, COP: 750, ARS: 85, CLP: 145, BRL: 0.75 
     };
     const symbols = { 
-        USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr",
+        USD: "$", EUR: "€", SEK: "kr", GBP: "£",
         MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$" 
     };
 
@@ -297,11 +295,11 @@
             const design = dH * dP;
             const maint = h * (curr === 'SEK' ? 1 : 0.1); 
 
-            const inv = mat + elec + design + maint;
-            let markup = isHeavy ? 80 : globalMarkup;
+            const cost = mat + elec + design + maint;
+            const m = isHeavy ? 80 : baseMarkup;
 
             tMat += mat; tElec += elec; tDes += design; tMaint += maint;
-            tProfit += (inv * (markup / 100));
+            tProfit += (cost * (m / 100));
         });
 
         const final = tMat + tElec + tMaint + tDes + tProfit;
