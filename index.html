@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculator3d - Pro Master v12.5</title>
+    <title>Calculator3d - Pro Master v12.6</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
@@ -197,10 +197,7 @@
     function removePart(id) { document.getElementById(`part-${id}`).remove(); calculateAll(); }
 
     function setLang(lang) {
-        currentLang = lang; 
-        const t = i18n[lang];
-        
-        // Traducción de elementos estáticos
+        currentLang = lang; const t = i18n[lang];
         document.getElementById('ui-refresh-btn').innerText = t.refBtn;
         document.getElementById('ui-add-part').innerText = t.add;
         document.getElementById('ui-currency-label').innerText = t.curr;
@@ -213,8 +210,6 @@
         document.getElementById('ui-toggle-label').innerText = t.toggle;
         document.getElementById('ui-heavy-global-alert').innerText = t.heavy;
         document.getElementById('ui-disclaimer-lbl').innerHTML = t.disc;
-
-        // Traducción forzada de tarjetas de piezas existentes
         document.querySelectorAll('.part-card').forEach(card => {
             card.querySelector('.ui-part-text').innerText = t.part;
             card.querySelector('.remove-btn').innerText = t.rem;
@@ -223,13 +218,8 @@
             card.querySelector('.ui-dh-text').innerText = t.dh;
             card.querySelector('.ui-dp-text').innerText = t.dp;
         });
-
-        // Actualizar estado visual de los botones de idioma
-        document.querySelectorAll('.lang-bar .control-btn').forEach(b => {
-            b.classList.remove('active');
-            if (b.id === 'btn-' + lang) b.classList.add('active');
-        });
-
+        document.querySelectorAll('.lang-bar .control-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + lang).classList.add('active');
         calculateAll();
     }
 
@@ -241,10 +231,12 @@
         const override = document.getElementById('overrideGain').checked;
         const rate = powerRates[curr]; const sym = symbols[curr];
 
-        let tMat = 0, tElec = 0, tDes = 0, tProfit = 0, tW = 0;
+        let tMat = 0, tElec = 0, tDes = 0, tProfit = 0, tW = 0, tMaint = 0;
+        
+        // Peso Total para la regla de 500g
         document.querySelectorAll('.p-weight').forEach(i => tW += parseFloat(i.value) || 0);
-
         const isHeavy = tW >= 500 && !override;
+        
         document.getElementById('ui-heavy-global-alert').style.display = isHeavy ? 'block' : 'none';
         markupInput.disabled = isHeavy;
 
@@ -254,35 +246,38 @@
             const dH = parseFloat(card.querySelector('.p-designH').value) || 0;
             const dP = parseFloat(card.querySelector('.p-designP').value) || 0;
 
+            // MATEMÁTICA PURA (Sin redondeos intermedios)
             const mat = (w / 1000) * costKg;
             const elec = ((150 * h) / 1000) * rate;
             const design = dH * dP;
+            // Mantenimiento estandarizado (aprox 0.1 USD/h o equivalente)
             const maint = h * (curr === 'SEK' ? 1 : 0.1);
 
             const cost = mat + elec + design + maint;
             const m = isHeavy ? 80 : baseMarkup;
 
-            tMat += mat; tElec += elec; tDes += design; tProfit += (cost * (m / 100));
+            tMat += mat; 
+            tElec += elec; 
+            tDes += design; 
+            tMaint += maint; // Ahora se suma correctamente al flujo
+            tProfit += (cost * (m / 100));
         });
 
-        const total = tMat + tElec + tDes + tProfit;
-        document.getElementById('master-mat').innerText = tMat.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-elec').innerText = tElec.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-design').innerText = tDes.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-profit').innerText = tProfit.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + sym;
-        document.getElementById('master-total').innerText = total.toLocaleString(undefined, {minimumFractionDigits: 2}) + ' ' + sym;
+        // El precio final es la suma de todas las inversiones (incluyendo mantenimiento) + la ganancia calculada
+        const finalTotal = tMat + tElec + tDes + tMaint + tProfit;
+
+        // FORMATEO VISUAL FINAL (Solo aquí se redondea para la vista)
+        document.getElementById('master-mat').innerText = tMat.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-elec').innerText = (tElec + tMaint).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym; // Se muestra Elec + Maint para simplicidad
+        document.getElementById('master-design').innerText = tDes.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-profit').innerText = tProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
+        document.getElementById('master-total').innerText = finalTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ' + sym;
     }
 
-    // Registro del Service Worker con desactivación de caché agresiva
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js?v=' + Date.now()).then(reg => {
-            reg.update();
-        });
+        navigator.serviceWorker.register('sw.js?v=' + Date.now());
     }
-
-    // Inicialización
     addPart();
-    setLang('es');
 </script>
 </body>
 </html>
