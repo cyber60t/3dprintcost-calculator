@@ -72,7 +72,7 @@
     </header>
 
     <div class="input-group">
-        <label>MONEDA / CURRENCY</label>
+        <label id="ui-currency-label">MONEDA / CURRENCY</label>
         <select id="currency" onchange="calculateAll()">
             <optgroup label="Global"><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option></optgroup>
             <optgroup label="Europe"><option value="SEK">SEK (kr)</option><option value="GBP">GBP (£)</option></optgroup>
@@ -102,10 +102,10 @@
 
     <div class="master-summary">
         <h2 id="ui-summary-title" style="text-align: center;">RESUMEN TOTAL DEL PEDIDO</h2>
-        <div class="summary-line"><span>GASTO TOTAL FILAMENTO:</span><span id="master-mat" class="val">0.00</span></div>
-        <div class="summary-line"><span>GASTO TOTAL CORRIENTE:</span><span id="master-elec" class="val">0.00</span></div>
-        <div class="summary-line"><span>GASTO TOTAL DISEÑO:</span><span id="master-design" class="val">0.00</span></div>
-        <div class="summary-line"><span>TOTAL kWh CONSUMIDOS:</span><span id="master-kwh" class="val">0.000 kWh</span></div>
+        <div class="summary-line"><span id="ui-total-mat-lbl">GASTO TOTAL FILAMENTO:</span><span id="master-mat" class="val">0.00</span></div>
+        <div class="summary-line"><span id="ui-total-elec-lbl">GASTO TOTAL CORRIENTE:</span><span id="master-elec" class="val">0.00</span></div>
+        <div class="summary-line"><span id="ui-total-design-lbl">GASTO TOTAL DISEÑO:</span><span id="master-design" class="val">0.00</span></div>
+        <div class="summary-line"><span id="ui-total-kwh-lbl">TOTAL kWh CONSUMIDOS:</span><span id="master-kwh" class="val">0.000 kWh</span></div>
         <hr style="border: 0; border-top: 1px solid #333; margin: 10px 0;">
         <div class="summary-line"><span id="ui-total-profit">GANANCIA NETA TOTAL:</span><span id="master-profit" class="val">0.00</span></div>
 
@@ -119,12 +119,11 @@
         Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones.
     </div>
 
-    <footer>CALCULATOR3D - v9.0 (Cache-Auto-Clean)</footer>
+    <footer>CALCULATOR3D - v9.5 (Multi-Lang Fix)</footer>
 </div>
 
 <script>
-    // SISTEMA DE VERSIÓN Y LIMPIEZA DE CACHÉ
-    const APP_VERSION = 'v9.0-' + Date.now(); 
+    const APP_VERSION = 'v9.5-' + Date.now(); 
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -133,14 +132,12 @@
                     const installingWorker = reg.installing;
                     installingWorker.onstatechange = () => {
                         if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            console.log('Nueva versión detectada. Actualizando...');
                             window.location.reload();
                         }
                     };
                 };
             });
         });
-
         let refreshing;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (refreshing) return;
@@ -149,29 +146,34 @@
         });
     }
 
-    // LÓGICA DE LA APLICACIÓN
     let partCount = 0;
     const powerRates = { USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, MXN: 2.10, COP: 750, ARS: 65, CLP: 145 };
     const symbols = { USD: "$", EUR: "€", SEK: "kr", GBP: "£", MXN: "$", COP: "$", ARS: "$", CLP: "$" };
 
     const i18n = {
         es: {
-            add: "+ AGREGAR PIEZA", summary: "RESUMEN TOTAL DEL PEDIDO", profit: "GANANCIA NETA TOTAL:", final: "PRECIO FINAL RECOMENDADO",
+            currLbl: "MONEDA / CURRENCY", add: "+ AGREGAR PIEZA", summary: "RESUMEN TOTAL DEL PEDIDO", profit: "GANANCIA NETA TOTAL:", final: "PRECIO FINAL RECOMENDADO",
             part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", designH: "HORAS DISEÑO", designP: "PRECIO POR HORA DISEÑO", 
             remove: "ELIMINAR", watts: "WATTS", toggle: "Liberar porcentaje manual (Ignorar regla 500g)",
-            global: "CONFIGURACIÓN BASE", filament: "COSTO FILAMENTO /KG", markup: "GANANCIA BASE (%)"
+            global: "CONFIGURACIÓN BASE", filament: "COSTO FILAMENTO /KG", markup: "GANANCIA BASE (%)",
+            tMat: "GASTO TOTAL FILAMENTO:", tElec: "GASTO TOTAL CORRIENTE:", tDes: "GASTO TOTAL DISEÑO:", tKwh: "TOTAL kWh CONSUMIDOS:",
+            heavy: "⚠️ RIESGO +500G: GANANCIA 80% ACTIVADA", disc: "Tarifas eléctricas y costos promediados regionalmente. Los cálculos son estimaciones."
         },
         en: {
-            add: "+ ADD PART", summary: "TOTAL ORDER SUMMARY", profit: "TOTAL NET PROFIT:", final: "RECOMMENDED FINAL PRICE",
+            currLbl: "CURRENCY / MONEDA", add: "+ ADD PART", summary: "TOTAL ORDER SUMMARY", profit: "TOTAL NET PROFIT:", final: "RECOMMENDED FINAL PRICE",
             part: "PART", weight: "WEIGHT (G)", time: "PRINT TIME (H)", designH: "DESIGN HOURS", designP: "DESIGN PRICE PER HOUR", 
             remove: "REMOVE", watts: "WATTS", toggle: "Manual override (Ignore 500g rule)",
-            global: "BASE SETTINGS", filament: "FILAMENT COST /KG", markup: "BASE PROFIT (%)"
+            global: "BASE SETTINGS", filament: "FILAMENT COST /KG", markup: "BASE PROFIT (%)",
+            tMat: "TOTAL FILAMENT COST:", tElec: "TOTAL ELECTRICITY COST:", tDes: "TOTAL DESIGN COST:", tKwh: "TOTAL kWh CONSUMED:",
+            heavy: "⚠️ +500G RISK: 80% PROFIT ACTIVATED", disc: "Regional average electricity rates and costs. Calculations are estimates."
         },
         sv: {
-            add: "+ LÄGG TILL DEL", summary: "TOTAL ORDER SAMMANFATTNING", profit: "TOTAL NETTOVINST:", final: "REKOMMENDERAT SLUTPRIS",
+            currLbl: "VALUTA / CURRENCY", add: "+ LÄGG TILL DEL", summary: "TOTAL ORDER SAMMANFATTNING", profit: "TOTAL NETTOVINST:", final: "REKOMMENDERAT SLUTPRIS",
             part: "DEL", weight: "VIKT (G)", time: "UTSKRIFTSTID (H)", designH: "DESIGNTIMMAR", designP: "TIMPRIS DESIGN", 
-            remove: "TA BORT", watts: "WATT", toggle: "Manuell justering (Ignorera 500g-regeln)",
-            global: "BASINSTÄLLNINGAR", filament: "FILAMENTKOSTNAD /KG", markup: "BASVINST (%)"
+            remove: "TA BORT", watts: "WATT", toggle: "Manuell vinstjustering (Ignorera 500g-regeln)",
+            global: "BASINSTÄLLNINGAR", filament: "FILAMENTKOSTNAD /KG", markup: "BASVINST (%)",
+            tMat: "TOTAL FILAMENTKOSTNAD:", tElec: "TOTAL ELKOSTNAD:", tDes: "TOTAL DESIGNKOSTNAD:", tKwh: "TOTAL kWh FÖRBRUKAD:",
+            heavy: "⚠️ +500G RISK: 80% VINST AKTIVERAD", disc: "Regionala genomsnittliga elpriser och kostnader. Beräkningar är uppskattningar."
         }
     };
 
@@ -183,17 +185,17 @@
         const container = document.getElementById('parts-container');
         const partHtml = `
             <div class="part-card" id="part-${partCount}">
-                <div class="part-header"><span style="font-weight:bold">${i18n[currentLang].part} #${partCount}</span><button class="remove-btn" onclick="removePart(${partCount})">${i18n[currentLang].remove}</button></div>
+                <div class="part-header"><span class="ui-part-num">${i18n[currentLang].part} #${partCount}</span><button class="remove-btn" onclick="removePart(${partCount})">${i18n[currentLang].remove}</button></div>
                 <div class="row">
-                    <div class="input-group"><label>${i18n[currentLang].weight}</label><input type="number" class="p-weight" value="0" step="0.1" oninput="calculateAll()"></div>
-                    <div class="input-group"><label>${i18n[currentLang].time}</label><input type="number" class="p-time" value="0" step="0.1" oninput="calculateAll()"></div>
+                    <div class="input-group"><label class="ui-weight-lbl">${i18n[currentLang].weight}</label><input type="number" class="p-weight" value="0" step="0.1" oninput="calculateAll()"></div>
+                    <div class="input-group"><label class="ui-time-lbl">${i18n[currentLang].time}</label><input type="number" class="p-time" value="0" step="0.1" oninput="calculateAll()"></div>
                 </div>
                 <div class="row">
-                    <div class="input-group"><label>${i18n[currentLang].designH}</label><input type="number" class="p-designH" value="0" step="0.1" oninput="calculateAll()"></div>
-                    <div class="input-group"><label>${i18n[currentLang].designP}</label><input type="number" class="p-designP" value="20" step="0.1" oninput="calculateAll()"></div>
+                    <div class="input-group"><label class="ui-dh-lbl">${i18n[currentLang].designH}</label><input type="number" class="p-designH" value="0" step="0.1" oninput="calculateAll()"></div>
+                    <div class="input-group"><label class="ui-dp-lbl">${i18n[currentLang].designP}</label><input type="number" class="p-designP" value="20" step="0.1" oninput="calculateAll()"></div>
                 </div>
-                <div class="input-group"><label>${i18n[currentLang].watts}</label><input type="number" class="p-watts" value="150" oninput="calculateAll()"></div>
-                <div class="alert-heavy" id="heavy-${partCount}" style="display:none; color:#ff0055; font-size:0.7em; font-weight:bold;">⚠️ RIESGO +500G: GANANCIA 80% ACTIVADA</div>
+                <div class="input-group"><label class="ui-watts-lbl">${i18n[currentLang].watts}</label><input type="number" class="p-watts" value="150" oninput="calculateAll()"></div>
+                <div class="alert-heavy" id="heavy-${partCount}" style="display:none; color:#ff0055; font-size:0.7em; font-weight:bold;">${i18n[currentLang].heavy}</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', partHtml);
@@ -204,19 +206,32 @@
 
     function setLang(lang) {
         currentLang = lang; const t = i18n[lang];
-        document.getElementById('ui-add-part').innerText = t.add; document.getElementById('ui-summary-title').innerText = t.summary;
-        document.getElementById('ui-total-profit').innerText = t.profit; document.getElementById('ui-final-label').innerText = t.final;
-        document.getElementById('ui-global-settings').innerText = t.global; document.getElementById('ui-cost-kg').innerText = t.filament;
-        document.getElementById('ui-markup').innerText = t.markup; document.getElementById('ui-toggle-label').innerText = t.toggle;
+        document.getElementById('ui-currency-label').innerText = t.currLbl;
+        document.getElementById('ui-add-part').innerText = t.add; 
+        document.getElementById('ui-summary-title').innerText = t.summary;
+        document.getElementById('ui-total-mat-lbl').innerText = t.tMat;
+        document.getElementById('ui-total-elec-lbl').innerText = t.tElec;
+        document.getElementById('ui-total-design-lbl').innerText = t.tDes;
+        document.getElementById('ui-total-kwh-lbl').innerText = t.tKwh;
+        document.getElementById('ui-total-profit').innerText = t.profit; 
+        document.getElementById('ui-final-label').innerText = t.final;
+        document.getElementById('ui-global-settings').innerText = t.global; 
+        document.getElementById('ui-cost-kg').innerText = t.filament;
+        document.getElementById('ui-markup').innerText = t.markup; 
+        document.getElementById('ui-toggle-label').innerText = t.toggle;
+        document.getElementById('ui-disclaimer').innerText = t.disc;
         
         document.querySelectorAll('.lang-bar .control-btn').forEach(b => { b.classList.remove('active'); if(b.id === 'btn-' + lang) b.classList.add('active'); });
         
         document.querySelectorAll('.part-card').forEach(card => {
-            const labels = card.querySelectorAll('label');
-            labels[0].innerText = t.weight; labels[1].innerText = t.time;
-            labels[2].innerText = t.designH; labels[3].innerText = t.designP;
-            labels[4].innerText = t.watts;
+            card.querySelector('.ui-part-num').innerText = `${t.part} #${card.id.split('-')[1]}`;
+            card.querySelector('.ui-weight-lbl').innerText = t.weight;
+            card.querySelector('.ui-time-lbl').innerText = t.time;
+            card.querySelector('.ui-dh-lbl').innerText = t.designH;
+            card.querySelector('.ui-dp-lbl').innerText = t.designP;
+            card.querySelector('.ui-watts-lbl').innerText = t.watts;
             card.querySelector('.remove-btn').innerText = t.remove;
+            if(card.querySelector('.alert-heavy').style.display === 'block') card.querySelector('.alert-heavy').innerText = t.heavy;
         });
         calculateAll();
     }
@@ -244,16 +259,15 @@
             const maint = h * (rate * 0.1); 
 
             const costBase = mat + elec + design + maint;
-            
             let markup = (w >= 500 && !manualOverride) ? 80 : globalMarkup;
             card.querySelector('.alert-heavy').style.display = (w >= 500 && !manualOverride) ? 'block' : 'none';
+            card.querySelector('.alert-heavy').innerText = i18n[currentLang].heavy;
 
             tMat += mat; tElec += elec; tDesign += design; tKwh += kwh;
             tProfit += (costBase * (markup / 100));
         });
 
         const finalPrice = tMat + tElec + tDesign + tProfit;
-
         document.getElementById('master-mat').innerText = `${tMat.toFixed(2)} ${sym}`;
         document.getElementById('master-elec').innerText = `${tElec.toFixed(2)} ${sym}`;
         document.getElementById('master-design').innerText = `${tDesign.toFixed(2)} ${sym}`;
