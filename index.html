@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber69t3dprint - Pro Analyzer</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#39FF14">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <style>
+        :root {
+            --neon-green: #39FF14;
+            --neon-glow: 0 0 10px #39FF14;
+            --bg-dark: #000000;
+            --card-bg: #0a0a0a;
+            --base-scale: 100%;
+        }
+
+        * { box-sizing: border-box; font-family: 'Courier New', Courier, monospace; transition: all 0.2s ease; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--neon-green);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-size: var(--base-scale);
+        }
+
+        .app-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            padding: 2em;
+            border: 2px solid var(--neon-green);
+            box-shadow: var(--neon-glow);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--neon-green);
+            margin-bottom: 1.5em;
+            padding-bottom: 1em;
+        }
+
+        .brand-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-shadow: var(--neon-glow);
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.7em;
+        }
+
+        .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
+
+        h2 { font-size: 0.9em; border-left: 4px solid var(--neon-green); padding-left: 10px; margin: 1.5em 0 1em 0; }
+
+        .input-group { margin-bottom: 1em; }
+        label { display: block; font-size: 0.75em; margin-bottom: 0.4em; opacity: 0.8; }
+        
+        input, select {
+            width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green);
+            padding: 0.7em; font-size: 0.95em; outline: none;
+        }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+
+        .analysis-box {
+            margin-top: 1.5em;
+            border: 1px dashed var(--neon-green);
+            padding: 1em;
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        .data-line { display: flex; justify-content: space-between; margin-bottom: 0.5em; font-size: 0.85em; }
+        .val { font-weight: bold; color: #fff; }
+        
+        .alert-auto {
+            font-size: 0.7em;
+            color: #fff;
+            background: #ff0055;
+            padding: 5px;
+            display: none;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .recommended-price {
+            margin-top: 1.5em;
+            padding: 1.2em;
+            background: var(--neon-green);
+            color: #000;
+            text-align: center;
+            box-shadow: var(--neon-glow);
+        }
+
+        .price-display { font-size: 2.5em; font-weight: 900; display: block; }
+
+        footer { text-align: center; font-size: 0.7em; margin-top: 2em; opacity: 0.5; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <div class="brand-name">CYBER69T3DPRINT</div>
+        <div class="controls-row">
+            <div class="lang-bar">
+                <button class="control-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+                <button class="control-btn" id="btn-sv" onclick="setLang('sv')">SV</button>
+                <button class="control-btn" id="btn-es" onclick="setLang('es')">ES</button>
+            </div>
+            <div class="scale-bar">
+                <button class="control-btn" onclick="setScale('100%')">100%</button>
+                <button class="control-btn" onclick="setScale('125%')">125%</button>
+                <button class="control-btn" onclick="setScale('150%')">MAX</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="input-group">
+        <label id="ui-currency">CURRENCY</label>
+        <select id="currency" onchange="calculate()">
+            <option value="USD">USD ($)</option>
+            <option value="SEK">SEK (kr)</option>
+        </select>
+    </div>
+
+    <h2 id="ui-sec-mat">MATERIAL & PRINT</h2>
+    <div class="row">
+        <div class="input-group">
+            <label id="ui-weight">WEIGHT (G)</label>
+            <input type="number" id="weight" value="0" oninput="calculate()">
+            <div id="heavy-alert" class="alert-auto">MAX RISK: 80% PROFIT APPLIED</div>
+        </div>
+        <div class="input-group">
+            <label id="ui-cost-kg">FILAMENT COST /KG</label>
+            <input type="number" id="costKg" value="0" oninput="calculate()">
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="input-group">
+            <label id="ui-time">PRINT TIME (H)</label>
+            <input type="number" id="time" value="0" oninput="calculate()">
+        </div>
+        <div class="input-group">
+            <label id="ui-power">POWER (W)</label>
+            <input type="number" id="power" value="150" oninput="calculate()">
+        </div>
+    </div>
+
+    <h2 id="ui-sec-design">DESIGN & LABOR</h2>
+    <div class="row">
+        <div class="input-group">
+            <label id="ui-design-time">DESIGN TIME (H)</label>
+            <input type="number" id="designTime" value="0" oninput="calculate()">
+        </div>
+        <div class="input-group">
+            <label id="ui-design-rate">DESIGN RATE/H</label>
+            <input type="number" id="designRate" value="25" oninput="calculate()">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label id="ui-markup">BASE PROFIT (%)</label>
+        <input type="number" id="markup" value="40" oninput="calculate()">
+    </div>
+
+    <div class="analysis-box">
+        <div class="data-line"><span id="ui-inv-mat">MATERIAL COST:</span><span id="res-mat" class="val">0.00</span></div>
+        <div class="data-line"><span id="ui-inv-elec">ELECTRICITY:</span><span id="res-elec" class="val">0.00</span></div>
+        <div class="data-line"><span id="ui-inv-design">DESIGN LABOR:</span><span id="res-design" class="val">0.00</span></div>
+        <div class="data-line" style="border-top:1px solid #333; padding-top:5px;"><span id="ui-profit">NET PROFIT:</span><span id="res-profit" class="val">0.00</span></div>
+    </div>
+
+    <div class="recommended-price">
+        <label id="ui-total-lbl">RECOMMENDED SALE PRICE</label>
+        <span class="price-display" id="total-price">0.00 $</span>
+    </div>
+
+    <footer>CYBER69T3DPRINT - v4.0</footer>
+</div>
+
+<script>
+    // i18n Dictionary
+    const i18n = {
+        en: {
+            weight: "WEIGHT (G)", costKg: "FILAMENT COST /KG", time: "PRINT TIME (H)",
+            currency: "CURRENCY", markup: "BASE PROFIT (%)", power: "POWER (W)",
+            designTime: "DESIGN TIME (H)", designRate: "DESIGN RATE/H",
+            secMat: "MATERIAL & PRINT", secDesign: "DESIGN & LABOR",
+            invMat: "MATERIAL COST:", invElec: "ELECTRICITY:",
+            invDesign: "DESIGN LABOR:", profit: "NET PROFIT:", total: "RECOMMENDED SALE PRICE",
+            heavy: "MAX RISK: 80% PROFIT APPLIED"
+        },
+        sv: {
+            weight: "VIKT (G)", costKg: "FILAMENTKOSTNAD /KG", time: "UTSKRIFTSTID (H)",
+            currency: "VALUTA", markup: "BASVINST (%)", power: "EFFEKT (W)",
+            designTime: "DESIGNTID (H)", designRate: "TIMPRIS DESIGN",
+            secMat: "MATERIAL & UTSKRIFT", secDesign: "DESIGN & ARBETE",
+            invMat: "MATERIALKOSTNAD:", invElec: "ELKOSTNAD:",
+            invDesign: "DESIGNARBETE:", profit: "NETTOVINST:", total: "REKOMMENDERAT PRIS",
+            heavy: "MAX RISK: 80% VINST TILLÄMPAD"
+        },
+        es: {
+            weight: "PESO (G)", costKg: "COSTO FILAMENTO /KG", time: "TIEMPO IMPRESIÓN (H)",
+            currency: "MONEDA", markup: "GANANCIA BASE (%)", power: "CONSUMO (W)",
+            designTime: "TIEMPO DISEÑO (H)", designRate: "PRECIO DISEÑO/H",
+            secMat: "MATERIAL Y IMPRESIÓN", secDesign: "DISEÑO Y LABOR",
+            invMat: "COSTO MATERIAL:", invElec: "ELECTRICIDAD:",
+            invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO DE VENTA RECOMENDADO",
+            heavy: "RIESGO MÁX: 80% GANANCIA APLICADA"
+        }
+    };
+
+    function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
+
+    function setLang(lang) {
+        const t = i18n[lang];
+        document.getElementById('ui-weight').innerText = t.weight;
+        document.getElementById('ui-cost-kg').innerText = t.costKg;
+        document.getElementById('ui-time').innerText = t.time;
+        document.getElementById('ui-currency').innerText = t.currency;
+        document.getElementById('ui-markup').innerText = t.markup;
+        document.getElementById('ui-power').innerText = t.power;
+        document.getElementById('ui-design-time').innerText = t.designTime;
+        document.getElementById('ui-design-rate').innerText = t.designRate;
+        document.getElementById('ui-sec-mat').innerText = t.secMat;
+        document.getElementById('ui-sec-design').innerText = t.secDesign;
+        document.getElementById('ui-inv-mat').innerText = t.invMat;
+        document.getElementById('ui-inv-elec').innerText = t.invElec;
+        document.getElementById('ui-inv-design').innerText = t.invDesign;
+        document.getElementById('ui-profit').innerText = t.profit;
+        document.getElementById('ui-total-lbl').innerText = t.total;
+        document.getElementById('heavy-alert').innerText = t.heavy;
+
+        document.querySelectorAll('.lang-bar .control-btn').forEach(b => {
+            b.classList.remove('active');
+            if(b.id === 'btn-' + lang) b.classList.add('active');
+        });
+        calculate();
+    }
+
+    function calculate() {
+        const weight = parseFloat(document.getElementById('weight').value) || 0;
+        const costKg = parseFloat(document.getElementById('costKg').value) || 0;
+        const time = parseFloat(document.getElementById('time').value) || 0;
+        const power = parseFloat(document.getElementById('power').value) || 0;
+        const designTime = parseFloat(document.getElementById('designTime').value) || 0;
+        const designRate = parseFloat(document.getElementById('designRate').value) || 0;
+        const baseMarkup = parseFloat(document.getElementById('markup').value) || 0;
+        const currency = document.getElementById('currency').value;
+        const symbol = currency === 'USD' ? '$' : 'kr';
+
+        let finalMarkup = baseMarkup;
+        const alertBox = document.getElementById('heavy-alert');
+        
+        if (weight >= 400) {
+            finalMarkup = 80;
+            alertBox.style.display = 'block';
+        } else {
+            alertBox.style.display = 'none';
+        }
+
+        const matCost = (weight * (costKg / 1000));
+        const energyPrice = (currency === 'USD') ? 0.22 : 2.50; 
+        const elecCost = (power * time / 1000) * energyPrice;
+        const designLabor = designTime * designRate;
+        const maintenance = time * 0.50;
+
+        const totalInvestment = matCost + elecCost + designLabor + maintenance;
+        const netProfit = totalInvestment * (finalMarkup / 100);
+        const finalPrice = totalInvestment + netProfit;
+
+        document.getElementById('res-mat').innerText = `${matCost.toFixed(2)} ${symbol}`;
+        document.getElementById('res-elec').innerText = `${elecCost.toFixed(2)} ${symbol}`;
+        document.getElementById('res-design').innerText = `${designLabor.toFixed(2)} ${symbol}`;
+        document.getElementById('res-profit').innerText = `${netProfit.toFixed(2)} ${symbol}`;
+        document.getElementById('total-price').innerText = `${finalPrice.toFixed(2)} ${symbol}`;
+    }
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+
+    setLang('en');
+</script>
+
+</body>
+</html>
