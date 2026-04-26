@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator3d - Global Pro</title>
+    <title>Calculator3d - Multi-Part Pro</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/915/915354.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
         :root {
@@ -26,18 +25,16 @@
             background-color: var(--bg-dark);
             color: var(--neon-green);
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             padding: 20px;
             font-size: var(--base-scale);
+            display: flex;
+            justify-content: center;
         }
 
         .app-container {
             background: var(--card-bg);
             width: 100%;
-            max-width: 650px;
+            max-width: 800px;
             padding: 2em;
             border: 2px solid var(--neon-green);
             box-shadow: var(--neon-glow);
@@ -56,15 +53,37 @@
 
         .control-btn {
             background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green);
-            padding: 5px 10px; cursor: pointer; font-size: 0.7em; text-transform: uppercase;
+            padding: 8px 12px; cursor: pointer; font-size: 0.8em; text-transform: uppercase;
         }
 
         .control-btn.active { background: var(--neon-green); color: #000; font-weight: bold; }
 
-        h2 { font-size: 0.9em; border-left: 4px solid var(--neon-green); padding-left: 10px; margin: 1.5em 0 1em 0; text-transform: uppercase; }
+        /* Piezas */
+        .part-card {
+            border: 1px solid #333;
+            padding: 1.5em;
+            margin-bottom: 1.5em;
+            position: relative;
+            background: #050505;
+        }
+
+        .part-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1em;
+            border-bottom: 1px solid #222;
+            padding-bottom: 5px;
+        }
+
+        .remove-btn {
+            background: #ff0055; color: white; border: none; padding: 5px 10px; cursor: pointer; font-size: 0.7em;
+        }
+
+        h2 { font-size: 0.9em; margin: 1em 0; text-transform: uppercase; color: #fff; }
 
         .input-group { margin-bottom: 1em; }
-        label { display: block; font-size: 0.75em; margin-bottom: 0.4em; opacity: 0.8; font-weight: bold; }
+        label { display: block; font-size: 0.75em; margin-bottom: 0.4em; opacity: 0.8; }
         
         input, select {
             width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green);
@@ -73,44 +92,47 @@
 
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
 
-        .analysis-box {
-            margin-top: 1.5em;
-            border: 1px dashed var(--neon-green);
-            padding: 1.2em;
-            background: rgba(57, 255, 20, 0.03);
+        .warning-text { font-size: 0.65em; color: #ffaa00; margin-top: 5px; display: block; }
+
+        /* Totales Finales */
+        .master-summary {
+            margin-top: 2em;
+            border: 2px solid var(--neon-green);
+            padding: 2em;
+            background: rgba(57, 255, 20, 0.05);
         }
 
-        .data-line { display: flex; justify-content: space-between; margin-bottom: 0.6em; font-size: 0.85em; }
-        .val { font-weight: bold; color: #fff; }
-        
-        .warning-text { font-size: 0.65em; color: #ffaa00; margin-top: 5px; display: block; line-height: 1.2; }
-
-        .alert-heavy {
-            font-size: 0.75em; color: #fff; background: #ff0055;
-            padding: 8px; display: none; margin: 10px 0; text-align: center; font-weight: bold;
-            border: 1px solid white;
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8em;
+            font-size: 1em;
         }
 
-        .toggle-container {
-            display: flex; align-items: center; gap: 10px; margin: 1em 0; font-size: 0.8em;
-            border: 1px solid #333; padding: 10px;
+        .total-highlight {
+            background: var(--neon-green);
+            color: #000;
+            padding: 1.5em;
+            text-align: center;
+            margin-top: 1em;
         }
 
-        .toggle-container input { width: auto; }
+        .total-price { font-size: 2.5em; font-weight: 900; display: block; }
 
-        .recommended-price {
-            margin-top: 1.5em; padding: 1.2em; background: var(--neon-green);
-            color: #000; text-align: center; box-shadow: var(--neon-glow);
+        .add-part-btn {
+            width: 100%;
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px dashed var(--neon-green);
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 2em;
         }
 
-        .price-display { font-size: 2.5em; font-weight: 900; display: block; }
+        .add-part-btn:hover { background: rgba(57, 255, 20, 0.1); }
 
-        .disclaimer-text {
-            margin-top: 25px; font-size: 0.65em; color: #888; text-align: center;
-            line-height: 1.4; border-top: 1px solid #222; padding-top: 15px;
-        }
-
-        footer { text-align: center; font-size: 0.7em; margin-top: 15px; opacity: 0.5; }
+        footer { text-align: center; font-size: 0.7em; margin-top: 2em; opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -124,224 +146,200 @@
                 <button class="control-btn" id="btn-sv" onclick="setLang('sv')">SV</button>
                 <button class="control-btn active" id="btn-es" onclick="setLang('es')">ES</button>
             </div>
-            <div class="scale-bar">
-                <button class="control-btn" onclick="setScale('100%')">100%</button>
-                <button class="control-btn" onclick="setScale('125%')">125%</button>
-            </div>
+            <select id="currency" style="width: auto;" onchange="calculateAll()">
+                <option value="USD">USD ($)</option>
+                <option value="SEK">SEK (kr)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="MXN">MXN ($)</option>
+                <option value="COP">COP ($)</option>
+            </select>
         </div>
     </header>
 
-    <div class="input-group">
-        <label id="ui-currency">MONEDA / CURRENCY</label>
-        <select id="currency" onchange="calculate()">
-            <optgroup label="Global">
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-            </optgroup>
-            <optgroup label="Europe">
-                <option value="SEK">SEK (kr)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="CHF">CHF (Fr.)</option>
-            </optgroup>
-            <optgroup label="Latinoamérica">
-                <option value="MXN">MXN ($)</option>
-                <option value="COP">COP ($)</option>
-                <option value="ARS">ARS ($)</option>
-                <option value="CLP">CLP ($)</option>
-                <option value="BRL">BRL (R$)</option>
-            </optgroup>
-        </select>
-    </div>
-
-    <h2 id="ui-sec-mat">Material e Impresión</h2>
-    <div class="row">
+    <div class="row" style="margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 20px;">
         <div class="input-group">
-            <label id="ui-weight">PESO DE PIEZA (G)</label>
-            <input type="number" id="weight" value="0" step="0.1" oninput="calculate()">
-            <span class="warning-text" id="ui-weight-warning">⚠️ Warning: Piezas de +500g aplican tasa de riesgo (80% ganancia).</span>
+            <label id="ui-global-filament">COSTO FILAMENTO /KG (BASE)</label>
+            <input type="number" id="globalCostKg" value="25" oninput="calculateAll()">
         </div>
         <div class="input-group">
-            <label id="ui-cost-kg">COSTO FILAMENTO /KG</label>
-            <input type="number" id="costKg" value="0" step="0.1" oninput="calculate()">
-        </div>
-    </div>
-    
-    <div id="heavy-alert" class="alert-heavy">GANANCIA FIJA ACTIVADA (PIEZA PESADA)</div>
-
-    <div class="row">
-        <div class="input-group">
-            <label id="ui-time">TIEMPO IMPRESIÓN (H)</label>
-            <input type="number" id="time" value="0" step="0.1" oninput="calculate()">
-        </div>
-        <div class="input-group">
-            <label id="ui-power">POTENCIA IMPRESORA (W)</label>
-            <input type="number" id="power" value="150" oninput="calculate()">
+            <label id="ui-global-markup">GANANCIA BASE %</label>
+            <input type="number" id="globalMarkup" value="40" oninput="calculateAll()">
         </div>
     </div>
 
-    <h2 id="ui-sec-design">Diseño y Labor</h2>
-    <div class="row">
-        <div class="input-group">
-            <label id="ui-design-time">TIEMPO DISEÑO (H)</label>
-            <input type="number" id="designTime" value="0" step="0.1" oninput="calculate()">
+    <div id="parts-container">
         </div>
-        <div class="input-group">
-            <label id="ui-design-rate">PRECIO DISEÑO /H</label>
-            <input type="number" id="designRate" value="25" oninput="calculate()">
+
+    <button class="add-part-btn" onclick="addPart()" id="ui-add-part">+ AGREGAR OTRA PIEZA</button>
+
+    <div class="master-summary">
+        <h2 id="ui-summary-title" style="text-align: center; border: none; font-size: 1.2em;">RESUMEN TOTAL DEL PEDIDO</h2>
+        <div class="summary-line">
+            <span id="ui-total-inv">INVERSIÓN TOTAL (Costos):</span>
+            <span id="master-inv" class="val">0.00</span>
+        </div>
+        <div class="summary-line">
+            <span id="ui-total-profit">GANANCIA TOTAL:</span>
+            <span id="master-profit" class="val">0.00</span>
+        </div>
+        <div class="summary-line">
+            <span id="ui-total-kwh">CONSUMO TOTAL (kWh):</span>
+            <span id="master-kwh" class="val">0.000</span>
+        </div>
+
+        <div class="total-highlight">
+            <label id="ui-final-label">PRECIO FINAL RECOMENDADO</label>
+            <span class="total-price" id="master-total">0.00 $</span>
         </div>
     </div>
 
-    <div class="input-group">
-        <label id="ui-markup">GANANCIA BASE (%)</label>
-        <input type="number" id="markup" value="40" oninput="calculate()">
-    </div>
-
-    <div class="toggle-container">
-        <input type="checkbox" id="overrideGain" onchange="calculate()">
-        <label id="ui-toggle-label">Liberar porcentaje manual (Ignorar regla 500g)</label>
-    </div>
-
-    <div class="analysis-box">
-        <div class="data-line"><span id="ui-inv-mat">COSTO MATERIAL:</span><span id="res-mat" class="val">0.00</span></div>
-        <div class="data-line"><span id="ui-inv-elec">CONSUMO ELÉCTRICO:</span><span id="res-elec" class="val">0.00 kW/h</span></div>
-        <div class="data-line"><span id="ui-inv-design">MANO OBRA DISEÑO:</span><span id="res-design" class="val">0.00</span></div>
-        <div class="data-line" style="border-top:1px solid #333; padding-top:8px; margin-top:5px;"><span id="ui-profit">GANANCIA NETA:</span><span id="res-profit" class="val">0.00</span></div>
-    </div>
-
-    <div class="recommended-price">
-        <label id="ui-total-lbl">PRECIO RECOMENDADO</label>
-        <span class="price-display" id="total-price">0.00 $</span>
-    </div>
-
-    <div class="disclaimer-text" id="ui-disclaimer">
-        Tarifas eléctricas promediadas regionalmente. Los cálculos finales son aproximaciones.
-    </div>
-
-    <footer>CALCULATOR3D GLOBAL - v6.8</footer>
+    <footer>CALCULATOR3D MULTI-PART - v7.0</footer>
 </div>
 
 <script>
+    let partCount = 0;
+    const powerRates = { USD: 0.22, SEK: 2.80, EUR: 0.28, MXN: 2.10, COP: 750 };
+    const symbols = { USD: "$", SEK: "kr", EUR: "€", MXN: "$", COP: "$" };
+
     const i18n = {
-        en: {
-            weight: "WEIGHT (G)", costKg: "FILAMENT COST /KG", time: "PRINT TIME (H)",
-            markup: "BASE PROFIT (%)", power: "PRINTER POWER (W)",
-            designTime: "DESIGN TIME (H)", designRate: "DESIGN RATE/H",
-            secMat: "MATERIAL & PRINT", secDesign: "DESIGN & LABOR",
-            invMat: "MATERIAL COST:", invElec: "ELECTRICITY:",
-            invDesign: "DESIGN LABOR:", profit: "NET PROFIT:", total: "RECOMMENDED PRICE",
-            warnWeight: "⚠️ Warning: Parts over 500g apply a risk rate (80% profit).",
-            toggle: "Manual override (Ignore 500g rule)",
-            heavy: "FIXED PROFIT ACTIVATED (HEAVY PART)",
-            disclaimer: "Electricity rates are estimated regional averages."
-        },
         es: {
-            weight: "PESO DE PIEZA (G)", costKg: "COSTO FILAMENTO /KG", time: "TIEMPO IMPRESIÓN (H)",
-            markup: "GANANCIA BASE (%)", power: "POTENCIA IMPRESORA (W)",
-            designTime: "TIEMPO DISEÑO (H)", designRate: "PRECIO DISEÑO /H",
-            secMat: "MATERIAL E IMPRESIÓN", secDesign: "DISEÑO Y LABOR",
-            invMat: "COSTO MATERIAL:", invElec: "CORRIENTE:",
-            invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO RECOMENDADO",
-            warnWeight: "⚠️ Warning: Piezas de +500g aplican tasa de riesgo (80% ganancia).",
-            toggle: "Liberar porcentaje manual (Ignorar regla 500g)",
-            heavy: "GANANCIA FIJA ACTIVADA (PIEZA PESADA)",
-            disclaimer: "Las tarifas eléctricas son promedios regionales estimados."
+            add: "+ AGREGAR OTRA PIEZA", summary: "RESUMEN TOTAL DEL PEDIDO",
+            inv: "INVERSIÓN TOTAL (Costos):", profit: "GANANCIA TOTAL:",
+            kwh: "CONSUMO TOTAL (kWh):", final: "PRECIO FINAL RECOMENDADO",
+            part: "PIEZA", weight: "PESO (G)", time: "TIEMPO (H)", 
+            design: "DISEÑO (H)", remove: "ELIMINAR",
+            warn: "⚠️ +500g aplica 80% ganancia."
+        },
+        en: {
+            add: "+ ADD ANOTHER PART", summary: "TOTAL ORDER SUMMARY",
+            inv: "TOTAL INVESTMENT (Costs):", profit: "TOTAL PROFIT:",
+            kwh: "TOTAL CONSUMPTION (kWh):", final: "RECOMMENDED FINAL PRICE",
+            part: "PART", weight: "WEIGHT (G)", time: "TIME (H)", 
+            design: "DESIGN (H)", remove: "REMOVE",
+            warn: "⚠️ +500g applies 80% profit."
         },
         sv: {
-            weight: "VIKT (G)", costKg: "FILAMENTKOSTNAD /KG", time: "UTSKRIFTSTID (H)",
-            markup: "BASVINST (%)", power: "EFFEKT (W)",
-            designTime: "DESIGNTID (H)", designRate: "TIMPRIS DESIGN",
-            secMat: "MATERIAL & UTSKRIFT", secDesign: "DESIGN & ARBETE",
-            invMat: "MATERIALKOSTNAD:", invElec: "ELKOSTNAD:",
-            invDesign: "DESIGNARBETE:", profit: "NETTOVINST:", total: "REKOMMENDERAT PRIS",
-            warnWeight: "⚠️ Varning: Delar över 500g tillämpar riskmarginal (80% vinst).",
-            toggle: "Manuell vinstjustering (Ignorera 500g-regeln)",
-            heavy: "FIXERAD VINST AKTIVERAD (TUNG DEL)",
-            disclaimer: "Elpriser är uppskattade regionala genomsnitt."
+            add: "+ LÄGG TILL EN ANNAN DEL", summary: "TOTAL ORDER SAMMANFATTNING",
+            inv: "TOTAL INVESTERING (Kostnader):", profit: "TOTAL VINST:",
+            kwh: "TOTAL FÖRBRUKNING (kWh):", final: "REKOMMENDERAT SLUTPRIS",
+            part: "DEL", weight: "VIKT (G)", time: "TID (H)", 
+            design: "DESIGN (H)", remove: "TA BORT",
+            warn: "⚠️ +500g tillämpar 80% vinst."
         }
     };
 
-    const powerRates = { 
-        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26,
-        MXN: 2.10, COP: 750, ARS: 65, CLP: 145, BRL: 0.75 
-    };
+    let currentLang = 'es';
 
-    const currencySymbols = { 
-        USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr.",
-        MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$" 
-    };
+    function addPart() {
+        partCount++;
+        const container = document.getElementById('parts-container');
+        const partHtml = `
+            <div class="part-card" id="part-${partCount}">
+                <div class="part-header">
+                    <span style="font-weight:bold">${i18n[currentLang].part} #${partCount}</span>
+                    <button class="remove-btn" onclick="removePart(${partCount})">${i18n[currentLang].remove}</button>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>${i18n[currentLang].weight}</label>
+                        <input type="number" class="p-weight" value="0" oninput="calculateAll()">
+                        <span class="warning-text">${i18n[currentLang].warn}</span>
+                    </div>
+                    <div class="input-group">
+                        <label>${i18n[currentLang].time}</label>
+                        <input type="number" class="p-time" value="0" oninput="calculateAll()">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-group">
+                        <label>${i18n[currentLang].design}</label>
+                        <input type="number" class="p-design" value="0" oninput="calculateAll()">
+                    </div>
+                    <div class="input-group">
+                        <label>WATTS</label>
+                        <input type="number" class="p-watts" value="150" oninput="calculateAll()">
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', partHtml);
+        calculateAll();
+    }
 
-    function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
+    function removePart(id) {
+        document.getElementById(`part-${id}`).remove();
+        calculateAll();
+    }
 
     function setLang(lang) {
-        const t = i18n[lang];
-        document.getElementById('ui-weight').innerText = t.weight;
-        document.getElementById('ui-cost-kg').innerText = t.costKg;
-        document.getElementById('ui-time').innerText = t.time;
-        document.getElementById('ui-markup').innerText = t.markup;
-        document.getElementById('ui-power').innerText = t.power;
-        document.getElementById('ui-design-time').innerText = t.designTime;
-        document.getElementById('ui-design-rate').innerText = t.designRate;
-        document.getElementById('ui-sec-mat').innerText = t.secMat;
-        document.getElementById('ui-sec-design').innerText = t.secDesign;
-        document.getElementById('ui-inv-mat').innerText = t.invMat;
-        document.getElementById('ui-inv-elec').innerText = t.invElec;
-        document.getElementById('ui-inv-design').innerText = t.invDesign;
-        document.getElementById('ui-profit').innerText = t.profit;
-        document.getElementById('ui-total-lbl').innerText = t.total;
-        document.getElementById('ui-weight-warning').innerText = t.warnWeight;
-        document.getElementById('ui-toggle-label').innerText = t.toggle;
-        document.getElementById('heavy-alert').innerText = t.heavy;
-        document.getElementById('ui-disclaimer').innerText = t.disclaimer;
-
+        currentLang = lang;
+        document.getElementById('ui-add-part').innerText = i18n[lang].add;
+        document.getElementById('ui-summary-title').innerText = i18n[lang].summary;
+        document.getElementById('ui-total-inv').innerText = i18n[lang].inv;
+        document.getElementById('ui-total-profit').innerText = i18n[lang].profit;
+        document.getElementById('ui-total-kwh').innerText = i18n[lang].kwh;
+        document.getElementById('ui-final-label').innerText = i18n[lang].final;
+        
         document.querySelectorAll('.lang-bar .control-btn').forEach(b => {
             b.classList.remove('active');
             if(b.id === 'btn-' + lang) b.classList.add('active');
         });
-        calculate();
+        
+        // Actualizar textos en tarjetas existentes
+        document.querySelectorAll('.part-card').forEach(card => {
+            card.querySelector('.warning-text').innerText = i18n[lang].warn;
+            card.querySelector('.remove-btn').innerText = i18n[lang].remove;
+        });
+
+        calculateAll();
     }
 
-    function calculate() {
-        const weight = parseFloat(document.getElementById('weight').value) || 0;
-        const costKg = parseFloat(document.getElementById('costKg').value) || 0;
-        const time = parseFloat(document.getElementById('time').value) || 0;
-        const powerW = parseFloat(document.getElementById('power').value) || 0;
-        const designTime = parseFloat(document.getElementById('designTime').value) || 0;
-        const designRate = parseFloat(document.getElementById('designRate').value) || 0;
-        const baseMarkup = parseFloat(document.getElementById('markup').value) || 0;
-        const manualOverride = document.getElementById('overrideGain').checked;
+    function calculateAll() {
         const curr = document.getElementById('currency').value;
+        const globalCostKg = parseFloat(document.getElementById('globalCostKg').value) || 0;
+        const globalMarkup = parseFloat(document.getElementById('globalMarkup').value) || 0;
+        const sym = symbols[curr];
+        const rate = powerRates[curr];
 
-        let finalMarkup = baseMarkup;
-        if (weight >= 500 && !manualOverride) {
-            finalMarkup = 80;
-            document.getElementById('heavy-alert').style.display = 'block';
-            document.getElementById('markup').disabled = true;
-            document.getElementById('markup').style.opacity = "0.5";
-        } else {
-            document.getElementById('heavy-alert').style.display = 'none';
-            document.getElementById('markup').disabled = false;
-            document.getElementById('markup').style.opacity = "1";
-        }
+        let totalInv = 0;
+        let totalProfit = 0;
+        let totalKWh = 0;
 
-        const matCost = (weight * (costKg / 1000));
-        const totalKWh = (powerW * time) / 1000;
-        const elecCost = totalKWh * (powerRates[curr] || 0.22);
-        const designLabor = designTime * designRate;
-        const maintenance = time * (curr === 'USD' ? 0.50 : 1.5); 
+        document.querySelectorAll('.part-card').forEach(card => {
+            const w = parseFloat(card.querySelector('.p-weight').value) || 0;
+            const t = parseFloat(card.querySelector('.p-time').value) || 0;
+            const d = parseFloat(card.querySelector('.p-design').value) || 0;
+            const p = parseFloat(card.querySelector('.p-watts').value) || 0;
 
-        const totalInvestment = matCost + elecCost + designLabor + maintenance;
-        const netProfit = totalInvestment * (finalMarkup / 100);
-        const finalPrice = totalInvestment + netProfit;
+            // Inversión por pieza
+            const matCost = (w * (globalCostKg / 1000));
+            const kwh = (p * t) / 1000;
+            const elecCost = kwh * rate;
+            const wear = t * 0.50; // Mantenimiento fijo
+            const labor = d * (curr === 'USD' ? 25 : 250); // Tarifa diseño promedio
 
-        const sym = currencySymbols[curr];
-        document.getElementById('res-mat').innerText = `${matCost.toFixed(2)} ${sym}`;
-        document.getElementById('res-elec').innerText = `${totalKWh.toFixed(3)} kWh (${elecCost.toFixed(2)} ${sym})`;
-        document.getElementById('res-design').innerText = `${designLabor.toFixed(2)} ${sym}`;
-        document.getElementById('res-profit').innerText = `${netProfit.toFixed(2)} ${sym}`;
-        document.getElementById('total-price').innerText = `${finalPrice.toLocaleString()} ${sym}`;
+            const partInv = matCost + elecCost + wear + labor;
+            
+            // Ganancia (80% si > 500g)
+            const markup = (w >= 500) ? 80 : globalMarkup;
+            const partProfit = partInv * (markup / 100);
+
+            totalInv += partInv;
+            totalProfit += partProfit;
+            totalKWh += kwh;
+        });
+
+        const finalPrice = totalInv + totalProfit;
+
+        document.getElementById('master-inv').innerText = `${totalInv.toLocaleString()} ${sym}`;
+        document.getElementById('master-profit').innerText = `${totalProfit.toLocaleString()} ${sym}`;
+        document.getElementById('master-kwh').innerText = totalKWh.toFixed(3);
+        document.getElementById('master-total').innerText = `${finalPrice.toLocaleString()} ${sym}`;
     }
 
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+    // Inicializar con una pieza
+    setScale('100%');
+    addPart();
     setLang('es');
 </script>
 </body>
