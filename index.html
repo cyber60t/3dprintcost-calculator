@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator3d - Pro Analyzer</title>
+    <title>Calculator3d - Global Pro</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#39FF14">
@@ -37,7 +37,7 @@
         .app-container {
             background: var(--card-bg);
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             padding: 2em;
             border: 2px solid var(--neon-green);
             box-shadow: var(--neon-glow);
@@ -83,13 +83,7 @@
         .data-line { display: flex; justify-content: space-between; margin-bottom: 0.6em; font-size: 0.85em; }
         .val { font-weight: bold; color: #fff; }
         
-        .warning-text {
-            font-size: 0.65em;
-            color: #ffaa00;
-            margin-top: 5px;
-            display: block;
-            line-height: 1.2;
-        }
+        .warning-text { font-size: 0.65em; color: #ffaa00; margin-top: 5px; display: block; line-height: 1.2; }
 
         .alert-heavy {
             font-size: 0.75em; color: #fff; background: #ff0055;
@@ -102,16 +96,11 @@
             color: #000; text-align: center; box-shadow: var(--neon-glow);
         }
 
-        .price-display { font-size: 2.8em; font-weight: 900; display: block; }
+        .price-display { font-size: 2.5em; font-weight: 900; display: block; }
 
         .disclaimer-text {
-            margin-top: 25px;
-            font-size: 0.65em;
-            color: #888;
-            text-align: center;
-            line-height: 1.4;
-            border-top: 1px solid #222;
-            padding-top: 15px;
+            margin-top: 25px; font-size: 0.65em; color: #888; text-align: center;
+            line-height: 1.4; border-top: 1px solid #222; padding-top: 15px;
         }
 
         footer { text-align: center; font-size: 0.7em; margin-top: 15px; opacity: 0.5; }
@@ -136,10 +125,24 @@
     </header>
 
     <div class="input-group">
-        <label id="ui-currency">MONEDA</label>
+        <label id="ui-currency">MONEDA / CURRENCY</label>
         <select id="currency" onchange="calculate()">
-            <option value="USD">USD ($)</option>
-            <option value="SEK">SEK (kr)</option>
+            <optgroup label="Global">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+            </optgroup>
+            <optgroup label="Europe">
+                <option value="SEK">SEK (kr)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="CHF">CHF (Fr.)</option>
+            </optgroup>
+            <optgroup label="Latinoamérica">
+                <option value="MXN">MXN ($)</option>
+                <option value="COP">COP ($)</option>
+                <option value="ARS">ARS ($)</option>
+                <option value="CLP">CLP ($)</option>
+                <option value="BRL">BRL (R$)</option>
+            </optgroup>
         </select>
     </div>
 
@@ -198,10 +201,10 @@
     </div>
 
     <div class="disclaimer-text" id="ui-disclaimer">
-        Las tarifas aplicadas sobre el costo de la corriente están basadas en un promedio aproximado de Suecia y EE. UU. Los cálculos finales son estimaciones.
+        Las tarifas eléctricas son promedios regionales estimados. Los cálculos finales son aproximaciones.
     </div>
 
-    <footer>CALCULATOR3D SYSTEM - v5.2</footer>
+    <footer>CALCULATOR3D GLOBAL - v6.0</footer>
 </div>
 
 <script>
@@ -212,10 +215,10 @@
             designTime: "DESIGN TIME (H)", designRate: "DESIGN RATE/H",
             secMat: "MATERIAL & PRINT", secDesign: "DESIGN & LABOR",
             invMat: "MATERIAL COST:", invElec: "ELECTRIC CONSUMPTION:",
-            invDesign: "DESIGN LABOR:", profit: "NET PROFIT:", total: "RECOMMENDED SALE PRICE",
+            invDesign: "DESIGN LABOR:", profit: "NET PROFIT:", total: "RECOMMENDED PRICE",
             heavy: "MAX RISK: +400G (80% PROFIT)",
-            warn: "⚠️ Warning: kW consumption is an estimate based on model.",
-            disclaimer: "Electricity rates are based on approximate averages for Sweden and the USA. Final calculations are estimates."
+            warn: "⚠️ Warning: kW consumption is an estimate.",
+            disclaimer: "Electricity rates are regional averages. Final calculations are estimates."
         },
         es: {
             weight: "PESO DE PIEZA (G)", costKg: "COSTO FILAMENTO /KG", time: "TIEMPO IMPRESIÓN (H)",
@@ -223,10 +226,10 @@
             designTime: "TIEMPO DISEÑO (H)", designRate: "PRECIO DISEÑO /H",
             secMat: "MATERIAL E IMPRESIÓN", secDesign: "DISEÑO Y LABOR",
             invMat: "COSTO MATERIAL:", invElec: "CONSUMO ELÉCTRICO:",
-            invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO DE VENTA RECOMENDADO",
+            invDesign: "MANO OBRA DISEÑO:", profit: "GANANCIA NETA:", total: "PRECIO RECOMENDADO",
             heavy: "RIESGO MÁX: +400G (80% GANANCIA)",
-            warn: "⚠️ Warning: Consumo kW aproximado según modelo.",
-            disclaimer: "Las tarifas aplicadas sobre el costo de la corriente están basadas en un promedio aproximado de Suecia y EE. UU. Los cálculos finales son estimaciones."
+            warn: "⚠️ Warning: Consumo kW aproximado.",
+            disclaimer: "Tarifas eléctricas promediadas regionalmente. Los cálculos finales son aproximaciones."
         },
         sv: {
             weight: "VIKT (G)", costKg: "FILAMENTKOSTNAD /KG", time: "UTSKRIFTSTID (H)",
@@ -237,8 +240,19 @@
             invDesign: "DESIGNARBETE:", profit: "NETTOVINST:", total: "REKOMMENDERAT PRIS",
             heavy: "MAX RISK: +400G (80% VINST)",
             warn: "⚠️ Varning: kW-förbrukning är en uppskattning.",
-            disclaimer: "Elpriser är baserade på ungefärliga genomsnitt för Sverige och USA. Slutliga beräkningar är uppskattningar."
+            disclaimer: "Elpriser är regionala genomsnitt. Slutliga beräkningar är uppskattningar."
         }
+    };
+
+    // Base de datos de costos de electricidad por moneda (promedios 2026)
+    const powerRates = {
+        USD: 0.22, EUR: 0.28, SEK: 2.80, GBP: 0.24, CHF: 0.26,
+        MXN: 2.10, COP: 750, ARS: 65, CLP: 145, BRL: 0.75
+    };
+
+    const currencySymbols = {
+        USD: "$", EUR: "€", SEK: "kr", GBP: "£", CHF: "Fr.",
+        MXN: "$", COP: "$", ARS: "$", CLP: "$", BRL: "R$"
     };
 
     function setScale(p) { document.documentElement.style.setProperty('--base-scale', p); }
@@ -248,7 +262,6 @@
         document.getElementById('ui-weight').innerText = t.weight;
         document.getElementById('ui-cost-kg').innerText = t.costKg;
         document.getElementById('ui-time').innerText = t.time;
-        document.getElementById('ui-currency').innerText = t.currency;
         document.getElementById('ui-markup').innerText = t.markup;
         document.getElementById('ui-power').innerText = t.power;
         document.getElementById('ui-design-time').innerText = t.designTime;
@@ -279,37 +292,30 @@
         const designTime = parseFloat(document.getElementById('designTime').value) || 0;
         const designRate = parseFloat(document.getElementById('designRate').value) || 0;
         const baseMarkup = parseFloat(document.getElementById('markup').value) || 0;
-        const currency = document.getElementById('currency').value;
-        const symbol = currency === 'USD' ? '$' : 'kr';
+        const curr = document.getElementById('currency').value;
 
         let finalMarkup = (weight >= 400) ? 80 : baseMarkup;
         document.getElementById('heavy-alert').style.display = (weight >= 400) ? 'block' : 'none';
 
         const matCost = (weight * (costKg / 1000));
-        
-        const powerKW = powerW / 1000;
-        const totalKWh = powerKW * time;
-        const kwhPrice = (currency === 'USD') ? 0.22 : 2.80;
-        const elecCost = totalKWh * kwhPrice;
-
+        const totalKWh = (powerW * time) / 1000;
+        const elecCost = totalKWh * (powerRates[curr] || 0.22);
         const designLabor = designTime * designRate;
-        const maintenance = time * 0.50;
+        const maintenance = time * (curr === 'USD' ? 0.50 : (powerRates[curr] * 2)); 
 
-        const totalInvestment = matCost + elecCost + designLabor + maintenance;
+        const totalInvestment = matCost + elecCost + designLabor + (maintenance / 2);
         const netProfit = totalInvestment * (finalMarkup / 100);
         const finalPrice = totalInvestment + netProfit;
 
-        document.getElementById('res-mat').innerText = `${matCost.toFixed(2)} ${symbol}`;
-        document.getElementById('res-elec').innerText = `${totalKWh.toFixed(3)} kWh (${elecCost.toFixed(2)} ${symbol})`;
-        document.getElementById('res-design').innerText = `${designLabor.toFixed(2)} ${symbol}`;
-        document.getElementById('res-profit').innerText = `${netProfit.toFixed(2)} ${symbol}`;
-        document.getElementById('total-price').innerText = `${finalPrice.toFixed(2)} ${symbol}`;
+        const sym = currencySymbols[curr];
+        document.getElementById('res-mat').innerText = `${matCost.toFixed(2)} ${sym}`;
+        document.getElementById('res-elec').innerText = `${totalKWh.toFixed(3)} kWh (${elecCost.toFixed(2)} ${sym})`;
+        document.getElementById('res-design').innerText = `${designLabor.toFixed(2)} ${sym}`;
+        document.getElementById('res-profit').innerText = `${netProfit.toFixed(2)} ${sym}`;
+        document.getElementById('total-price').innerText = `${finalPrice.toLocaleString()} ${sym}`;
     }
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
     setLang('es');
 </script>
 </body>
